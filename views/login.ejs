@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesse sua conta - Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-sistema.css">
+</head>
+<body>
+
+    <!-- 1. BARRA SUPERIOR (HEADER CINZA-CLARO COM LOGO, PESQUISA E MENU) -->
+    <header class="top-header">
+        <div class="container top-header-inner">
+            <a href="/" class="logo-wrapper" title="Agro Giuss Início">
+                <img src="/img/logo.png" alt="Agro Giuss" class="logo">
+            </a>
+
+            <div class="top-actions">
+                <form class="top-search-form" action="/catalogo" method="GET">
+                    <input type="text" name="busca" class="top-search-input" placeholder="Pesquisar" aria-label="Pesquisar">
+                    <button type="submit" class="top-search-btn" aria-label="Buscar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </form>
+
+                <button class="menu-hamburger-btn" aria-label="Menu principal">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- FAIXA FINA VERDE-CLARA (#a6eeb0) -->
+    <div class="thin-green-divider"></div>
+
+    <!-- 2. CONTEÚDO PRINCIPAL (2 COLUNAS CENTRALIZADAS) -->
+    <main class="login-page-main">
+        <div class="container">
+            <div class="login-grid">
+
+                <!-- Coluna Esquerda: Formulário de Acesso -->
+                <div class="login-card">
+                    <h1 class="login-card-title">Acesse sua conta</h1>
+                    <p class="login-card-subtitle">Insira seus dados para continuar.</p>
+
+                    <% if (typeof erro !== 'undefined' && erro) { %>
+                        <div class="login-error-box" role="alert">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span><%= erro %></span>
+                        </div>
+                    <% } %>
+
+                    <form action="/login" method="POST">
+                        <div class="login-form-group">
+                            <input 
+                                type="text" 
+                                name="identificador" 
+                                class="login-input" 
+                                placeholder="Insira seu nome" 
+                                required 
+                                autofocus
+                                value="<%= typeof identificador !== 'undefined' ? identificador : '' %>"
+                            >
+                        </div>
+
+                        <div class="login-form-group">
+                            <input 
+                                type="password" 
+                                name="senha" 
+                                class="login-input password-input" 
+                                placeholder="Insira sua senha" 
+                                required
+                            >
+                        </div>
+
+                        <button type="submit" class="login-submit-btn">Acessar</button>
+
+                        <p class="login-footer-text">
+                            Ainda não tem conta? <a href="/catalogo">Cadastre-se agora.</a>
+                        </p>
+                    </form>
+                </div>
+
+                <!-- Coluna Direita: Mascote e Frase de Apoio -->
+                <div class="login-mascot-wrapper">
+                    <img src="/img/fazendeiro.png" alt="Fazendeiro Agro Giuss" class="login-mascot-img">
+                    <h2 class="login-mascot-title">Tudo para o campo, organizado para você.</h2>
+                    <p class="login-mascot-text">
+                        Consulte pedidos, acompanhe ofertas e encontre soluções práticas para sua rotina com uma experiência simples, clara e profissional.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

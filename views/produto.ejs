@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= produto.nome %> - Detalhes do Produto | Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-sistema.css">
+</head>
+<body>
+
+    <!-- 1. BARRA SUPERIOR (HEADER CINZA-CLARO COM LOGO, BUSCA E MENU) -->
+    <header class="top-header">
+        <div class="container top-header-inner">
+            <a href="/" class="logo-wrapper" title="Agro Giuss Início">
+                <img src="/img/logo.png" alt="Agro Giuss" class="logo">
+            </a>
+
+            <div class="top-actions">
+                <form class="top-search-form" action="/catalogo" method="GET">
+                    <input type="text" name="busca" class="top-search-input" placeholder="Pesquisar" aria-label="Pesquisar">
+                    <button type="submit" class="top-search-btn" aria-label="Buscar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </form>
+
+                <button class="menu-hamburger-btn" aria-label="Menu principal">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- FAIXA FINA VERDE-CLARA (#a6eeb0) -->
+    <div class="thin-green-divider"></div>
+
+    <!-- 2. CONTEÚDO PRINCIPAL DO DETALHE DO PRODUTO -->
+    <main class="detalhe-page-main">
+        <div class="container">
+
+            <!-- Breadcrumb: Catálogo > Categoria > Nome -->
+            <nav class="breadcrumb-nav" aria-label="Navegação estrutural">
+                <a href="/catalogo">Catálogo</a>
+                <span class="breadcrumb-sep">/</span>
+                <a href="/catalogo?categoria=<%= produto.id_categoria %>"><%= produto.categoria_nome %></a>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-current"><%= produto.nome %></span>
+            </nav>
+
+            <!-- Grid Principal em 2 Colunas -->
+            <div class="produto-grid">
+
+                <!-- Coluna Esquerda: Galeria de Imagens -->
+                <div class="galeria-wrapper">
+                    <!-- Imagem Principal Grande -->
+                    <div class="galeria-main-box">
+                        <img 
+                            id="imagemPrincipal" 
+                            src="<%= produto.imagem_url || '/img/logo.png' %>" 
+                            alt="<%= produto.nome %>" 
+                            class="galeria-main-img"
+                        >
+                    </div>
+
+                    <!-- Fileira com 4 Miniaturas (Thumbnails) -->
+                    <div class="galeria-thumbs-row">
+                        <div class="thumb-item active" onclick="trocarImagem(this, '<%= produto.imagem_url || '/img/logo.png' %>')">
+                            <img src="<%= produto.imagem_url || '/img/logo.png' %>" alt="Visualização 1" class="thumb-img">
+                        </div>
+                        <div class="thumb-item" onclick="trocarImagem(this, '<%= produto.imagem_url || '/img/logo.png' %>')">
+                            <img src="<%= produto.imagem_url || '/img/logo.png' %>" alt="Visualização 2" class="thumb-img">
+                        </div>
+                        <div class="thumb-item" onclick="trocarImagem(this, '<%= produto.imagem_url || '/img/logo.png' %>')">
+                            <img src="<%= produto.imagem_url || '/img/logo.png' %>" alt="Visualização 3" class="thumb-img">
+                        </div>
+                        <div class="thumb-item" onclick="trocarImagem(this, '<%= produto.imagem_url || '/img/logo.png' %>')">
+                            <img src="<%= produto.imagem_url || '/img/logo.png' %>" alt="Visualização 4" class="thumb-img">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Informações de Compra e Detalhes -->
+                <div class="produto-info-col">
+
+                    <!-- Botão Voltar -->
+                    <a href="/catalogo" class="btn-voltar-pill">
+                        &larr; Voltar
+                    </a>
+
+                    <!-- Badge de Estoque -->
+                    <% const emEstoque = (produto.quantidade_estoque > 0); %>
+                    <span class="badge-status <%= emEstoque ? 'em-estoque' : 'esgotado' %>">
+                        <%= emEstoque ? 'Em estoque' : 'Esgotado' %>
+                    </span>
+
+                    <!-- Título Grande -->
+                    <h1 class="detalhe-title">
+                        <%= produto.nome %>
+                    </h1>
+
+                    <!-- Subtítulo Descritivo -->
+                    <p class="detalhe-subtitulo">
+                        <%= produto.observacao %>
+                    </p>
+
+                    <!-- Linha de Preço e Disponibilidade -->
+                    <div class="preco-disponibilidade-row">
+                        <div>
+                            <div class="preco-label">Preço por unidade</div>
+                            <div class="preco-valor">
+                                R$<%= Number(produto.valor_custo).toFixed(2).replace('.', ',') %>
+                            </div>
+                        </div>
+
+                        <div class="disp-box">
+                            <div class="disp-label">Disponibilidade</div>
+                            <span class="badge-status <%= emEstoque ? 'em-estoque' : 'esgotado' %>">
+                                <%= emEstoque ? 'Em estoque' : 'Esgotado' %>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Linha de Ação: Seletor de Quantidade e Botão Comprar -->
+                    <div class="comprar-row">
+                        <div class="qtd-selector-box">
+                            <button type="button" class="qtd-btn" onclick="alterarQtd(-1)" aria-label="Diminuir quantidade">&minus;</button>
+                            <input type="text" id="qtdInput" class="qtd-display" value="1" readonly>
+                            <button type="button" class="qtd-btn" onclick="alterarQtd(1)" aria-label="Aumentar quantidade">&plus;</button>
+                        </div>
+
+                        <button 
+                            type="button" 
+                            class="btn-comprar-agora" 
+                            onclick="alert('Item adicionado ao carrinho com sucesso!')"
+                        >
+                            Comprar agora
+                        </button>
+                    </div>
+
+                    <!-- Grid de 3 Caixas de Especificações -->
+                    <% 
+                        // Lógica para especificações dinâmicas e fiéis ao Figma
+                        let pesoVal = '15kg';
+                        const pesoMatch = produto.nome.match(/(\d+\s*kg)/i) || (produto.observacao && produto.observacao.match(/(\d+\s*kg)/i));
+                        if (pesoMatch) {
+                            pesoVal = pesoMatch[1];
+                        } else if (produto.nome.toLowerCase().includes('adubo')) {
+                            pesoVal = '5kg';
+                        } else if (produto.nome.toLowerCase().includes('tinta')) {
+                            pesoVal = '3.6L';
+                        } else if (produto.nome.toLowerCase().includes('pá') || produto.nome.toLowerCase().includes('molinete')) {
+                            pesoVal = '1.2kg';
+                        }
+
+                        let spec2Label = 'Proteína';
+                        let spec2Val = '27%';
+                        let spec3Label = 'Sabor';
+                        let spec3Val = 'Frango e arroz';
+
+                        if (!produto.nome.toLowerCase().includes('ração') && !produto.nome.toLowerCase().includes('dog')) {
+                            spec2Label = 'Categoria';
+                            spec2Val = produto.categoria_nome || 'Geral';
+                            spec3Label = 'Estoque';
+                            spec3Val = produto.quantidade_estoque + ' un.';
+                        }
+                    %>
+                    <div class="specs-grid">
+                        <div class="spec-card">
+                            <div class="spec-label">Peso</div>
+                            <div class="spec-val"><%= pesoVal %></div>
+                        </div>
+
+                        <div class="spec-card">
+                            <div class="spec-label"><%= spec2Label %></div>
+                            <div class="spec-val"><%= spec2Val %></div>
+                        </div>
+
+                        <div class="spec-card">
+                            <div class="spec-label"><%= spec3Label %></div>
+                            <div class="spec-val"><%= spec3Val %></div>
+                        </div>
+                    </div>
+
+                    <!-- Caixa "Sobre o produto" -->
+                    <div class="sobre-produto-card">
+                        <h2 class="sobre-title">Sobre o produto</h2>
+                        <p class="sobre-text">
+                            <%= produto.observacao || 'Fórmula completa desenvolvida para alto rendimento, durabilidade e segurança comprovada no campo e no lar.' %>
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Script Simples para Galeria e Seletor Numérico -->
+    <script>
+        function trocarImagem(thumbElement, novaSrc) {
+            document.getElementById('imagemPrincipal').src = novaSrc;
+            const thumbs = document.querySelectorAll('.thumb-item');
+            thumbs.forEach(t => t.classList.remove('active'));
+            thumbElement.classList.add('active');
+        }
+
+        function alterarQtd(delta) {
+            const input = document.getElementById('qtdInput');
+            let atual = parseInt(input.value) || 1;
+            atual += delta;
+            if (atual < 1) atual = 1;
+            <% if (produto.quantidade_estoque > 0) { %>
+                if (atual > <%= produto.quantidade_estoque %>) {
+                    atual = <%= produto.quantidade_estoque %>;
+                }
+            <% } %>
+            input.value = atual;
+        }
+    </script>
+
+</body>
+</html>

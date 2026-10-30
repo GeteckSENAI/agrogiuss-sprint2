@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agro Giuss - A Força do Campo e a Praticidade para o seu Dia a Dia</title>
+    <!-- CSS Exclusivo da Landing Page -->
+    <link rel="stylesheet" href="/css/estilos-lp.css">
+</head>
+<body>
+
+    <!-- 1. BARRA SUPERIOR (HEADER CINZA-CLARO) -->
+    <header class="top-header">
+        <div class="container top-header-inner">
+            <!-- Logo Agro Giuss -->
+            <a href="/" class="logo-wrapper">
+                <img src="/img/logo.png" alt="Agro Giuss" class="logo">
+            </a>
+
+            <!-- Campo de Busca e Menu Hambúrguer -->
+            <div class="top-actions">
+                <form class="search-box" action="/catalogo" method="GET">
+                    <input type="text" name="busca" class="search-input" placeholder="Pesquisar" aria-label="Pesquisar produtos">
+                    <button type="submit" class="search-btn" aria-label="Buscar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </form>
+
+                <button class="menu-hamburger-btn" aria-label="Abrir menu de navegação">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. BARRA DE NAVEGAÇÃO (VERDE-CLARA #a6eeb0) -->
+    <nav class="main-navbar">
+        <div class="container navbar-inner">
+            <!-- Links da Esquerda -->
+            <ul class="nav-links">
+                <li><a href="/" class="nav-link active">Início</a></li>
+                <li><a href="/catalogo" class="nav-link">Catálogo</a></li>
+                <li><a href="/catalogo" class="nav-link">Ofertas</a></li>
+                <li><a href="/catalogo" class="nav-link">Meus pedidos</a></li>
+            </ul>
+
+            <!-- Link da Direita -->
+            <a href="/login" class="nav-auth">Entrar / Criar conta</a>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
+        <!-- 3. SEÇÃO HERO (2 COLUNAS) -->
+        <section class="hero-section">
+            <div class="container hero-grid">
+                <!-- Coluna Esquerda: Textos e Botões -->
+                <div class="hero-content">
+                    <div class="badge">
+                        Soluções para campo, casa e rebanho
+                    </div>
+                    
+                    <h1 class="hero-title">
+                        A Força do Campo e a Praticidade para o seu Dia a Dia em um Só Lugar.
+                    </h1>
+
+                    <p class="hero-subtitle">
+                        Encontre ferramentas, insumos, rações e acessórios com uma experiência clara, organizada e pronta para compra.
+                    </p>
+
+                    <div class="hero-buttons">
+                        <a href="/catalogo" class="btn btn-primary">Conheça nossos produtos</a>
+                        <a href="/login" class="btn btn-secondary">Acesso administrativo</a>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Imagem da Loja -->
+                <div class="hero-image-wrapper">
+                    <img src="/img/hero.jpg" alt="Interior da Loja Agro Giuss" class="hero-image">
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SEÇÃO INSTITUCIONAL (MISSÃO/VISÃO/VALORES) -->
+        <section class="institutional-section">
+            <div class="container">
+                <h2 class="institutional-title">O coração no agro. As portas abertas para tudo.</h2>
+                <p class="institutional-text">
+                    Nós nascemos com a missão de fortalecer quem planta e cria, mas crescemos para atender todas as suas necessidades. Na Agro Giuss, você não precisa ir a vários lugares para riscar sua lista de compras. Seja para equipar sua propriedade rural, garantir a saúde do seu rebanho ou buscar aquela ferramenta de reparo essencial para a sua casa em Mirandópolis e região, nós temos a solução.
+                </p>
+            </div>
+        </section>
+
+        <!-- 5. SEÇÃO DE SERVIÇOS ("O QUE VOCÊ ENCONTRA NA AGRO GIUSS?") -->
+        <section class="services-section">
+            <div class="container">
+                <h2 class="services-title">O que você encontra na Agro Giuss?</h2>
+                <p class="services-subtitle">Tudo para garantir a produtividade e a segurança da sua propriedade com as melhores marcas do mercado:</p>
+
+                <div class="services-grid">
+                    <!-- Card 1: Insumos e Defensivos -->
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="service-card-title">Insumos e Defensivos</h3>
+                        <p class="service-card-desc">Fertilizantes e soluções de alta qualidade para o cuidado com a terra e o rendimento da lavoura.</p>
+                    </div>
+
+                    <!-- Card 2: Nutrição e Saúde Animal -->
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </div>
+                        <h3 class="service-card-title">Nutrição e Saúde Animal</h3>
+                        <p class="service-card-desc">Rações, sais minerais, suplementos e medicamentos para grandes e pequenos animais.</p>
+                    </div>
+
+                    <!-- Card 3: Ferramentas e Maquinário -->
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="service-card-title">Ferramentas e Maquinário</h3>
+                        <p class="service-card-desc">Peças de reposição, implementos agrícolas e ferramentas pesadas para o trabalho bruto.</p>
+                    </div>
+
+                    <!-- Card 4: EPIs e Segurança -->
+                    <div class="service-card">
+                        <div class="service-icon-box">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="service-card-title">EPIs e Segurança</h3>
+                        <p class="service-card-desc">Botinas, luvas e equipamentos completos para a proteção do trabalhador do campo.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. BANNER INFERIOR (CTA) -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-box">
+                    <div class="cta-content">
+                        <h3 class="cta-title">Pronto para comprar ou administrar sua conta?</h3>
+                        <p class="cta-subtitle">Use o acesso público para navegar pelo catálogo e pedidos, ou acesse a área administrativa para gerenciar operações, estoque e usuários.</p>
+                    </div>
+
+                    <div class="cta-buttons">
+                        <a href="/catalogo" class="btn btn-primary">Acessar catálogo</a>
+                        <a href="/login" class="btn btn-secondary">Acesso administrativo</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

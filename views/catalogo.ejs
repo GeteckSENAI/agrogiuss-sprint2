@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras de produtos - Catálogo Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-sistema.css">
+</head>
+<body>
+
+    <!-- 1. BARRA SUPERIOR (HEADER CINZA-CLARO COM LOGO, BUSCA E MENU) -->
+    <header class="top-header">
+        <div class="container top-header-inner">
+            <a href="/" class="logo-wrapper" title="Agro Giuss Início">
+                <img src="/img/logo.png" alt="Agro Giuss" class="logo">
+            </a>
+
+            <div class="top-actions">
+                <form class="top-search-form" action="/catalogo" method="GET">
+                    <input type="text" name="busca" class="top-search-input" placeholder="Pesquisar" value="<%= typeof busca !== 'undefined' ? busca : '' %>" aria-label="Pesquisar">
+                    <button type="submit" class="top-search-btn" aria-label="Buscar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </form>
+
+                <button class="menu-hamburger-btn" aria-label="Menu principal">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. BARRA DE NAVEGAÇÃO VERDE (#a6eeb0) -->
+    <nav class="green-navbar">
+        <div class="container green-navbar-inner">
+            <ul class="green-nav-links">
+                <li><a href="/">Compras de produtos</a></li>
+                <li><a href="/catalogo" class="active">Catálogo</a></li>
+                <li><a href="/catalogo">Ofertas</a></li>
+                <li><a href="/catalogo">Meus pedidos</a></li>
+            </ul>
+
+            <div class="green-nav-user">
+                <% if (typeof usuarioNome !== 'undefined' && usuarioNome) { %>
+                    <span>Bem vindo, <%= usuarioNome %>.</span>
+                    <a href="/logout" class="logout-link" title="Sair da conta">(sair)</a>
+                <% } else { %>
+                    <a href="/login">Entrar / Criar conta</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 3. SEÇÃO PRINCIPAL DO CATÁLOGO -->
+    <main class="catalogo-section">
+        <div class="container">
+
+            <!-- Cabeçalho da Seção -->
+            <div class="catalogo-header">
+                <div class="catalogo-header-info">
+                    <h1 class="catalogo-title">Compras de produtos</h1>
+                    <p class="catalogo-subtitle">
+                        Encontre ferramentas, insumos, rações e acessórios com uma experiência clara, organizada e pronta para compra.
+                    </p>
+                </div>
+
+                <!-- Campo de Busca de Produtos -->
+                <form class="catalogo-search-box" action="/catalogo" method="GET">
+                    <% if (typeof categoriaAtiva !== 'undefined' && categoriaAtiva) { %>
+                        <input type="hidden" name="categoria" value="<%= categoriaAtiva %>">
+                    <% } %>
+                    <span class="catalogo-search-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </span>
+                    <input 
+                        type="text" 
+                        name="busca" 
+                        class="catalogo-search-input" 
+                        placeholder="Pesquisar produtos, categorias ou marcas" 
+                        value="<%= typeof busca !== 'undefined' ? busca : '' %>"
+                    >
+                </form>
+            </div>
+
+            <!-- Barra de Filtros (Pílulas Horizontais) -->
+            <div class="filter-bar-wrapper">
+                <div class="filter-pills-list">
+                    <!-- Botão Todos -->
+                    <a 
+                        href="/catalogo<%= typeof busca !== 'undefined' && busca ? ('?busca=' + encodeURIComponent(busca)) : '' %>" 
+                        class="filter-pill <%= (!categoriaAtiva || categoriaAtiva === 'todos') ? 'active' : '' %>"
+                    >
+                        Todos
+                    </a>
+
+                    <!-- Pílulas Dinâmicas das Categorias do Banco -->
+                    <% if (typeof categorias !== 'undefined' && categorias.length > 0) { %>
+                        <% categorias.forEach(function(cat) { %>
+                            <a 
+                                href="/catalogo?categoria=<%= cat.id_categoria %><%= typeof busca !== 'undefined' && busca ? ('&busca=' + encodeURIComponent(busca)) : '' %>" 
+                                class="filter-pill <%= (categoriaAtiva && String(categoriaAtiva) === String(cat.id_categoria)) ? 'active' : '' %>"
+                            >
+                                <%= cat.nome %>
+                            </a>
+                        <% }); %>
+                    <% } %>
+                </div>
+
+                <!-- Seletor de Ordenação -->
+                <div class="sort-dropdown-box">
+                    <form action="/catalogo" method="GET" id="sortForm">
+                        <% if (typeof categoriaAtiva !== 'undefined' && categoriaAtiva) { %>
+                            <input type="hidden" name="categoria" value="<%= categoriaAtiva %>">
+                        <% } %>
+                        <% if (typeof busca !== 'undefined' && busca) { %>
+                            <input type="hidden" name="busca" value="<%= busca %>">
+                        <% } %>
+                        <select name="ordem" class="sort-select-pill" onchange="document.getElementById('sortForm').submit()">
+                            <option value="az" <%= (typeof ordem !== 'undefined' && ordem === 'az') ? 'selected' : '' %>>Ordenar: A - Z</option>
+                            <option value="za" <%= (typeof ordem !== 'undefined' && ordem === 'za') ? 'selected' : '' %>>Ordenar: Z - A</option>
+                            <option value="menor-preco" <%= (typeof ordem !== 'undefined' && ordem === 'menor-preco') ? 'selected' : '' %>>Menor preço</option>
+                            <option value="maior-preco" <%= (typeof ordem !== 'undefined' && ordem === 'maior-preco') ? 'selected' : '' %>>Maior preço</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Grid de Produtos (3 Colunas) -->
+            <% if (typeof produtos !== 'undefined' && produtos.length > 0) { %>
+                <div class="products-grid">
+                    <% produtos.forEach(function(produto) { %>
+                        <article class="product-card">
+                            <div class="product-img-box">
+                                <a href="/produto/<%= produto.id_produto %>" title="Ver detalhes de <%= produto.nome %>">
+                                    <img src="<%= produto.imagem_url || '/img/logo.png' %>" alt="<%= produto.nome %>" class="product-img">
+                                </a>
+                            </div>
+
+                            <h3 class="product-name">
+                                <a href="/produto/<%= produto.id_produto %>">
+                                    <%= produto.nome %>
+                                </a>
+                            </h3>
+
+                            <p class="product-desc">
+                                <%= produto.observacao || 'Produto de alta qualidade para o campo e sua rotina.' %>
+                            </p>
+
+                            <div class="product-footer">
+                                <span class="product-price">
+                                    R$<%= Number(produto.valor_custo).toFixed(2).replace('.', ',') %>
+                                </span>
+                                <a href="/produto/<%= produto.id_produto %>" class="btn-adicionar">
+                                    Adicionar
+                                </a>
+                            </div>
+                        </article>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 48px; text-align: center; margin-bottom: 32px;">
+                    <p style="font-size: 16px; color: #4b5563; margin-bottom: 12px;">Nenhum produto encontrado com os filtros selecionados.</p>
+                    <a href="/catalogo" class="btn-adicionar" style="display: inline-block;">Ver todos os produtos</a>
+                </div>
+            <% } %>
+
+            <!-- Rodapé da Listagem -->
+            <div class="catalogo-footer">
+                <span class="catalogo-counter">
+                    Mostrando <%= typeof produtos !== 'undefined' ? produtos.length : 0 %> produtos
+                </span>
+
+                <div class="catalogo-pagination">
+                    <button type="button" class="btn-pag-prev" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Anterior</button>
+                    <button type="button" class="btn-pag-next" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Próxima página</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
