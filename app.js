@@ -70,6 +70,26 @@ async function garantirEstruturaBanco() {
                 tipo = EXCLUDED.tipo,
                 ativo = true
         `);
+
+        // Atualiza imagens das categorias que estavam com PNGs recortados para fotos de capa em alta resolução
+        const fotosCategorias = [
+            [1, 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=800&q=80'],
+            [2, 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=800&q=80'],
+            [3, 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=800&q=80'],
+            [4, 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=800&q=80'],
+            [5, 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80'],
+            [6, 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=800&q=80'],
+            [7, 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=800&q=80'],
+            [8, 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=800&q=80'],
+            [9, 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80'],
+            [10, 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=800&q=80']
+        ];
+        for (const [idCat, urlFoto] of fotosCategorias) {
+            await BD.query(
+                `UPDATE categorias SET imagem_url = $1 WHERE id_categoria = $2 AND (imagem_url IS NULL OR imagem_url LIKE '/img/%')`,
+                [urlFoto, idCat]
+            );
+        }
     } catch (e) {
         console.warn('Aviso ao verificar estrutura inicial do banco:', e.message);
     }
@@ -549,16 +569,17 @@ app.get('/admin/estoque', async (req, res) => {
 });
 
 app.post('/admin/estoque/movimentar', async (req, res) => {
-    const { id_produto, tipo, quantidade, observacao } = req.body;
+    const { id_produto, tipo, quantidade, observacao, redirect_to } = req.body;
+    const baseRedirect = (redirect_to && redirect_to.startsWith('/admin')) ? redirect_to : '/admin/estoque';
     try {
         const qtd = parseInt(quantidade, 10);
         if (!id_produto || isNaN(qtd) || qtd < 0) {
-            return res.redirect('/admin/estoque?erro=' + encodeURIComponent('Informe uma quantidade válida.'));
+            return res.redirect(baseRedirect + '?erro=' + encodeURIComponent('Informe uma quantidade válida.'));
         }
 
         const prodRes = await BD.query('SELECT * FROM produtos WHERE id_produto = $1', [id_produto]);
         if (prodRes.rows.length === 0) {
-            return res.redirect('/admin/estoque?erro=' + encodeURIComponent('Produto não encontrado.'));
+            return res.redirect(baseRedirect + '?erro=' + encodeURIComponent('Produto não encontrado.'));
         }
 
         const prod = prodRes.rows[0];
@@ -571,7 +592,7 @@ app.post('/admin/estoque/movimentar', async (req, res) => {
             tipoHist = 'entrada';
         } else if (tipo === 'saida') {
             if (prod.quantidade_estoque < qtd) {
-                return res.redirect('/admin/estoque?erro=' + encodeURIComponent(`Estoque insuficiente para saída. Atual: ${prod.quantidade_estoque} un.`));
+                return res.redirect(baseRedirect + '?erro=' + encodeURIComponent(`Estoque insuficiente para saída. Atual: ${prod.quantidade_estoque} un.`));
             }
             novoEstoque = prod.quantidade_estoque - qtd;
             tipoHist = 'saida';
@@ -591,10 +612,10 @@ app.post('/admin/estoque/movimentar', async (req, res) => {
             [id_produto, idUsr, tipoHist, Math.max(1, qtdHist), observacao || `Estoque ajustado: ${prod.nome}`]
         );
 
-        return res.redirect('/admin/estoque?sucesso=' + encodeURIComponent(`Estoque de "${prod.nome}" atualizado para ${novoEstoque} unidades!`));
+        return res.redirect(baseRedirect + '?sucesso=' + encodeURIComponent(`Estoque de "${prod.nome}" atualizado para ${novoEstoque} unidades!`));
     } catch (err) {
         console.error('Erro ao movimentar estoque:', err);
-        return res.redirect('/admin/estoque?erro=' + encodeURIComponent('Erro ao atualizar o estoque.'));
+        return res.redirect(baseRedirect + '?erro=' + encodeURIComponent('Erro ao atualizar o estoque.'));
     }
 });
 
@@ -858,6 +879,47 @@ app.post('/admin/produtos/salvar', async (req, res) => {
     }
 });
 
+// Tela Individual de Gerenciamento do Produto (GET /admin/produtos/:id)
+app.get('/admin/produtos/:id', async (req, res, next) => {
+    if (req.params.id === 'novo') return next();
+    const { id } = req.params;
+    const { sucesso, erro } = req.query;
+    try {
+        const [prodRes, catRes, movRes] = await Promise.all([
+            BD.query(`
+                SELECT p.*, c.nome AS nome_categoria
+                FROM produtos p
+                LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
+                WHERE p.id_produto = $1
+            `, [id]),
+            BD.query('SELECT * FROM categorias ORDER BY nome ASC'),
+            BD.query(`
+                SELECT m.*, u.nome AS nome_usuario
+                FROM movimentacoes_estoque m
+                LEFT JOIN usuarios u ON m.id_usuario = u.id_usuario
+                WHERE m.id_produto = $1
+                ORDER BY m.id_movimentacao DESC
+                LIMIT 20
+            `, [id])
+        ]);
+
+        if (prodRes.rows.length === 0) {
+            return res.redirect('/admin/estoque');
+        }
+
+        res.render('admin/produto-detalhe', {
+            produto: prodRes.rows[0],
+            categorias: catRes.rows,
+            movimentacoes: movRes.rows,
+            sucesso: sucesso || null,
+            erro: erro || null
+        });
+    } catch (err) {
+        console.error('Erro ao carregar gerenciamento individual do produto:', err);
+        res.redirect('/admin/estoque');
+    }
+});
+
 app.get('/admin/produtos/:id/editar', async (req, res) => {
     try {
         const [prodRes, catRes] = await Promise.all([
@@ -881,7 +943,8 @@ app.get('/admin/produtos/:id/editar', async (req, res) => {
 
 app.post('/admin/produtos/:id/salvar', async (req, res) => {
     const { id } = req.params;
-    const { nome, valor_custo, id_categoria, quantidade_estoque, estoque_minimo, observacao, imagem_base64, imagem_url_atual } = req.body;
+    const { nome, valor_custo, id_categoria, quantidade_estoque, estoque_minimo, observacao, imagem_base64, imagem_url_atual, redirect_to } = req.body;
+    const baseRedirect = (redirect_to && redirect_to.startsWith('/admin')) ? redirect_to : '/admin/estoque';
     try {
         const preco = parsePreco(valor_custo);
         const qtd = Math.max(0, parseInt(quantidade_estoque, 10) || 0);
@@ -894,10 +957,10 @@ app.post('/admin/produtos/:id/salvar', async (req, res) => {
              WHERE id_produto = $8`,
             [id_categoria, nome.trim(), observacao || null, qtd, min, preco, imgSalva, id]
         );
-        return res.redirect('/admin/estoque?sucesso=' + encodeURIComponent(`Produto "${nome}" atualizado com sucesso!`));
+        return res.redirect(baseRedirect + '?sucesso=' + encodeURIComponent(`Produto "${nome}" atualizado com sucesso!`));
     } catch (err) {
         console.error('Erro ao atualizar produto:', err);
-        return res.redirect('/admin/estoque?erro=' + encodeURIComponent('Erro ao atualizar o produto.'));
+        return res.redirect(baseRedirect + '?erro=' + encodeURIComponent('Erro ao atualizar o produto.'));
     }
 });
 

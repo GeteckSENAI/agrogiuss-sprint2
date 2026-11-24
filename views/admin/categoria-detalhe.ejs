@@ -115,19 +115,22 @@
                         const dataStr = prod.data_cadastro ? new Date(prod.data_cadastro).toLocaleDateString('pt-BR') : '29/03/2025';
                     %>
                         <article class="adm-catalog-card">
-                            <div class="adm-card-img-wrap">
+                            <a href="/admin/produtos/<%= prod.id_produto %>" class="adm-card-img-wrap" title="Gerenciar <%= prod.nome %>">
                                 <img src="<%= prod.imagem_url || '/img/logo.png' %>" alt="<%= prod.nome %>" class="adm-card-img contain-img">
-                            </div>
+                            </a>
 
-                            <div class="adm-card-body">
+                            <a href="/admin/produtos/<%= prod.id_produto %>" class="adm-card-body">
                                 <h3 class="adm-card-title"><%= prod.nome %></h3>
                                 <p class="adm-card-desc"><%= prod.observacao || 'Produto oficial do catálogo Agro Giuss.' %></p>
                                 <span class="adm-card-date"><%= dataStr %> &bull; R$ <%= Number(prod.valor_custo).toFixed(2).replace('.', ',') %></span>
-                            </div>
+                            </a>
 
                             <div class="adm-card-footer">
                                 <span class="adm-card-count"><%= prod.quantidade_estoque %> unidades</span>
-                                <a href="/admin/produtos/<%= prod.id_produto %>/editar" class="btn-adm-mint">Editar</a>
+                                <div style="display:flex; gap:6px;">
+                                    <a href="/admin/produtos/<%= prod.id_produto %>" class="btn-adm-mint" style="background:#eaf9ed;">Gerenciar</a>
+                                    <a href="/admin/produtos/<%= prod.id_produto %>/editar" class="btn-adm-mint">Editar</a>
+                                </div>
                             </div>
                         </article>
                     <% }); %>

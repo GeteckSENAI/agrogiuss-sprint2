@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar: <%= produto.nome %> - Painel Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-admin.css">
+    <style>
+        .prod-mgmt-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 1.25fr;
+            gap: 22px;
+            margin-top: 18px;
+        }
+        .prod-hero-card {
+            background: #ffffff;
+            border: 1px solid var(--adm-border);
+            border-radius: 18px;
+            padding: 24px;
+            display: flex;
+            gap: 22px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .prod-hero-img-box {
+            width: 120px;
+            height: 120px;
+            border-radius: 14px;
+            background: #f8faf9;
+            border: 1px solid var(--adm-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            flex-shrink: 0;
+        }
+        .prod-hero-img-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .prod-hero-info {
+            flex: 1;
+        }
+        .prod-hero-badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .quick-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0 18px;
+        }
+        .quick-chip-btn {
+            padding: 7px 13px;
+            border-radius: 10px;
+            border: 1px solid var(--adm-border);
+            background: #f8faf9;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--adm-text-dark);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .quick-chip-btn:hover {
+            border-color: var(--adm-green-primary);
+            background: var(--adm-mint-soft);
+            color: var(--adm-green-dark);
+        }
+        .mov-badge-entrada {
+            background: #ecfdf3;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .mov-badge-saida {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        @media (max-width: 960px) {
+            .prod-mgmt-grid { grid-template-columns: 1fr; }
+            .prod-hero-card { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('partials/topbar', { searchAction: '/admin/estoque', searchPlaceholder: 'Pesquisar produto no estoque' }) %>
+
+    <div class="adm-layout">
+        <%- include('partials/sidebar', {
+            menuAtivo: 'estoque',
+            proximaAcao: 'Gerencie o estoque, preço, status e histórico individual deste produto.'
+        }) %>
+
+        <main>
+            <% 
+                const qtd = Number(produto.quantidade_estoque);
+                const min = Number(produto.estoque_minimo || 5);
+                const preco = Number(produto.valor_custo || 0);
+                const valorTotalEstoque = qtd * preco;
+                let statusClass = 'status-ok';
+                let statusLabel = 'Em dia (OK)';
+                if (qtd < min) {
+                    statusClass = 'status-critico';
+                    statusLabel = 'Precisa reestoque';
+                } else if (qtd === min || qtd <= Math.ceil(min * 1.15)) {
+                    statusClass = 'status-atencao';
+                    statusLabel = 'Atenção';
+                }
+            %>
+
+            <!-- Cabeçalho da Ficha Individual -->
+            <div class="adm-header-row">
+                <div>
+                    <div style="font-size:12.5px; color:#71717a; margin-bottom:6px;">
+                        <a href="/admin/estoque" style="color:#15803d; font-weight:600;">Estoque</a> &rsaquo;
+                        <a href="/admin/categorias/<%= produto.id_categoria %>" style="color:#15803d; font-weight:600;"><%= produto.nome_categoria || 'Categoria' %></a> &rsaquo;
+                        <span>SKU #<%= String(produto.id_produto).padStart(2, '0') %></span>
+                    </div>
+                    <h1 class="adm-page-title">Gerenciar produto</h1>
+                    <p class="adm-page-sub">Controle individual de estoque, precificação, disponibilidade e histórico do item.</p>
+                </div>
+                <div class="adm-header-actions">
+                    <a href="/admin/estoque" class="btn-adm-outline">&larr; Voltar ao estoque</a>
+                    <a href="/produto/<%= produto.id_produto %>" target="_blank" class="btn-adm-outline">Ver na loja &nearr;</a>
+                    <a href="/admin/produtos/<%= produto.id_produto %>/editar" class="btn-adm-primary">Edição completa</a>
+                </div>
+            </div>
+
+            <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+                <div class="adm-alert adm-alert-success"><%= sucesso %></div>
+            <% } %>
+            <% if (typeof erro !== 'undefined' && erro) { %>
+                <div class="adm-alert adm-alert-error"><%= erro %></div>
+            <% } %>
+
+            <!-- Card Destaque do Produto -->
+            <div class="prod-hero-card">
+                <div class="prod-hero-img-box">
+                    <img src="<%= produto.imagem_url || '/img/logo.png' %>" alt="<%= produto.nome %>">
+                </div>
+                <div class="prod-hero-info">
+                    <div class="prod-hero-badges">
+                        <span class="adm-stock-id-badge">SKU #<%= String(produto.id_produto).padStart(2, '0') %></span>
+                        <span class="adm-draft-pill"><%= produto.nome_categoria || 'Geral' %></span>
+                        <span class="status-pill <%= statusClass %>"><%= statusLabel %></span>
+                        <span class="status-pill <%= produto.ativo ? 'status-ok' : 'status-critico' %>">
+                            <%= produto.ativo ? 'Visível no catálogo' : 'Oculto' %>
+                        </span>
+                    </div>
+                    <h2 style="font-size:24px; font-weight:800; color:#18181b; margin-bottom:6px;"><%= produto.nome %></h2>
+                    <p style="font-size:13.5px; color:#52525b; max-width:740px;"><%= produto.observacao || 'Sem descrição cadastrada.' %></p>
+                </div>
+            </div>
+
+            <!-- 4 KPIs do Produto Individual -->
+            <div class="adm-kpi-grid">
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Estoque atual</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= qtd %> un.</div>
+                    <div class="adm-kpi-foot">Disponível para pronta entrega</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Estoque mínimo</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= min %> un.</div>
+                    <div class="adm-kpi-foot">Limite para alerta de reposição</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Preço unitário</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value" style="font-size:26px;">R$ <%= preco.toFixed(2).replace('.', ',') %></div>
+                    <div class="adm-kpi-foot">Valor praticado no catálogo</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Valor em estoque</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value" style="font-size:26px;">R$ <%= valorTotalEstoque.toFixed(2).replace('.', ',') %></div>
+                    <div class="adm-kpi-foot">Custo total das unidades</div>
+                </div>
+            </div>
+
+            <!-- Grid de 2 Colunas: Ajuste de Estoque + Edição Rápida -->
+            <div class="prod-mgmt-grid">
+                <!-- Coluna 1: Ajuste Rápido de Estoque -->
+                <div class="adm-panel-card">
+                    <div class="adm-panel-head">
+                        <h2 class="adm-panel-title">Ajustar estoque deste produto</h2>
+                        <span class="adm-panel-tag">Atualização imediata</span>
+                    </div>
+
+                    <p style="font-size:13px; color:#52525b;">Use os atalhos abaixo ou preencha a movimentação personalizada:</p>
+
+                    <div class="quick-chips">
+                        <button type="button" class="quick-chip-btn" onclick="setQuickMov('entrada', 5, 'Reposição rápida (+5 un.)')">+5 un.</button>
+                        <button type="button" class="quick-chip-btn" onclick="setQuickMov('entrada', 10, 'Reposição rápida (+10 un.)')">+10 un.</button>
+                        <button type="button" class="quick-chip-btn" onclick="setQuickMov('entrada', 25, 'Entrada de lote (+25 un.)')">+25 un.</button>
+                        <button type="button" class="quick-chip-btn" onclick="setQuickMov('saida', 1, 'Baixa unitária (-1 un.)')">-1 un.</button>
+                        <button type="button" class="quick-chip-btn" onclick="setQuickMov('saida', 5, 'Saída de estoque (-5 un.)')">-5 un.</button>
+                    </div>
+
+                    <form action="/admin/estoque/movimentar" method="POST">
+                        <input type="hidden" name="id_produto" value="<%= produto.id_produto %>">
+                        <input type="hidden" name="redirect_to" value="/admin/produtos/<%= produto.id_produto %>">
+
+                        <div class="adm-form-row-2">
+                            <div class="adm-field-group">
+                                <label class="adm-field-label" for="tipoIndividual">Operação</label>
+                                <select name="tipo" id="tipoIndividual" class="adm-field-select" required>
+                                    <option value="entrada">Entrada (+ Somar)</option>
+                                    <option value="saida">Saída (- Subtrair)</option>
+                                    <option value="definir">Definir estoque exato</option>
+                                </select>
+                            </div>
+
+                            <div class="adm-field-group">
+                                <label class="adm-field-label" for="qtdIndividual">Quantidade</label>
+                                <input type="number" name="quantidade" id="qtdIndividual" class="adm-field-input" min="0" value="10" required>
+                            </div>
+                        </div>
+
+                        <div class="adm-field-group">
+                            <label class="adm-field-label" for="obsIndividual">Motivo / Observação</label>
+                            <input type="text" name="observacao" id="obsIndividual" class="adm-field-input" placeholder="Ex: Recebimento de mercadoria / Inventário">
+                        </div>
+
+                        <button type="submit" class="btn-adm-primary" style="width:100%; padding:13px;">
+                            Aplicar ajuste de estoque
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Coluna 2: Edição Rápida de Dados e Exclusão -->
+                <div class="adm-panel-card">
+                    <div class="adm-panel-head">
+                        <h2 class="adm-panel-title">Dados e configurações</h2>
+                        <span class="adm-panel-tag">SKU #<%= String(produto.id_produto).padStart(2, '0') %></span>
+                    </div>
+
+                    <form action="/admin/produtos/<%= produto.id_produto %>/salvar" method="POST">
+                        <input type="hidden" name="redirect_to" value="/admin/produtos/<%= produto.id_produto %>">
+                        <input type="hidden" name="imagem_url_atual" value="<%= produto.imagem_url || '' %>">
+                        <input type="hidden" name="quantidade_estoque" value="<%= produto.quantidade_estoque %>">
+
+                        <div class="adm-form-row-2">
+                            <div class="adm-field-group">
+                                <label class="adm-field-label">Nome do produto</label>
+                                <input type="text" name="nome" class="adm-field-input" value="<%= produto.nome %>" required>
+                            </div>
+                            <div class="adm-field-group">
+                                <label class="adm-field-label">Preço (R$)</label>
+                                <input type="text" name="valor_custo" class="adm-field-input" value="R$ <%= preco.toFixed(2).replace('.', ',') %>" required>
+                            </div>
+                        </div>
+
+                        <div class="adm-form-row-2">
+                            <div class="adm-field-group">
+                                <label class="adm-field-label">Categoria</label>
+                                <select name="id_categoria" class="adm-field-select" required>
+                                    <% categorias.forEach(function(c) { %>
+                                        <option value="<%= c.id_categoria %>" <%= Number(c.id_categoria) === Number(produto.id_categoria) ? 'selected' : '' %>><%= c.nome %></option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div class="adm-field-group">
+                                <label class="adm-field-label">Estoque mínimo (alerta)</label>
+                                <input type="number" name="estoque_minimo" class="adm-field-input" min="0" value="<%= min %>" required>
+                            </div>
+                        </div>
+
+                        <div class="adm-field-group">
+                            <label class="adm-field-label">Descrição</label>
+                            <input type="text" name="observacao" class="adm-field-input" value="<%= produto.observacao || '' %>">
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:16px;">
+                            <button 
+                                type="submit" 
+                                formaction="/admin/produtos/<%= produto.id_produto %>/excluir" 
+                                class="btn-adm-outline" 
+                                style="color:#dc2626; border-color:#fecaca;"
+                                onclick="return confirm('Tem certeza que deseja excluir este produto permanentemente?')"
+                            >
+                                Excluir produto
+                            </button>
+                            <button type="submit" class="btn-adm-primary">Salvar alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Histórico de Movimentações deste Produto -->
+            <div class="adm-stock-table-card" style="margin-top:22px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 14px 4px;">
+                    <h3 style="font-size:18px; font-weight:800; color:#18181b;">Histórico de movimentações deste produto</h3>
+                    <span style="font-size:12.5px; color:#71717a;"><%= movimentacoes.length %> registros</span>
+                </div>
+                <table class="adm-stock-table">
+                    <thead>
+                        <tr>
+                            <th>Data / Hora</th>
+                            <th>Tipo</th>
+                            <th>Quantidade</th>
+                            <th>Responsável</th>
+                            <th>Observação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (movimentacoes && movimentacoes.length > 0) { %>
+                            <% movimentacoes.forEach(function(m) { %>
+                                <tr>
+                                    <td style="font-size:13.5px; color:#52525b;">
+                                        <%= new Date(m.data_movimentacao).toLocaleString('pt-BR') %>
+                                    </td>
+                                    <td>
+                                        <span class="<%= m.tipo === 'entrada' ? 'mov-badge-entrada' : 'mov-badge-saida' %>">
+                                            <%= m.tipo === 'entrada' ? '+ ENTRADA' : '- SAÍDA' %>
+                                        </span>
+                                    </td>
+                                    <td style="font-weight:700;"><%= m.quantidade %> un.</td>
+                                    <td style="font-size:13.5px;"><%= m.nome_usuario || 'Administrador' %></td>
+                                    <td style="font-size:13.5px; color:#52525b;"><%= m.observacao || '—' %></td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5" style="text-align:center; padding:28px; color:#71717a; font-size:13.5px;">
+                                    Nenhuma movimentação registrada ainda para este produto.
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function setQuickMov(tipo, qtd, obs) {
+            document.getElementById('tipoIndividual').value = tipo;
+            document.getElementById('qtdIndividual').value = qtd;
+            document.getElementById('obsIndividual').value = obs;
+        }
+    </script>
+
+</body>
+</html>

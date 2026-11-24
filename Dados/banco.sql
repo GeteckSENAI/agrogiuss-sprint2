@@ -68,17 +68,18 @@ ALTER TABLE categorias ADD COLUMN IF NOT EXISTS imagem_url VARCHAR(255);
 
 -- Categorias do Catálogo Figma:
 INSERT INTO categorias (id_categoria, nome, descricao, imagem_url, ativa) VALUES
-(1, 'Utensílios', 'Ferramentas manuais e utensílios práticos para trabalho no campo e manutenção geral.', '/img/pa-construcao.png', true),
-(2, 'Agricultura', 'Insumos, sementes, defensivos e soluções para plantio de alto rendimento.', '/img/adubo-npk.png', true),
-(3, 'Animais', 'Cuidados, alimentação e veterinária para grandes e pequenos animais.', 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=600&q=80', true),
-(4, 'Rações', 'Alimento balanceado para cães, gatos, cavalos, aves e peixes.', '/img/special-dog.png', true),
-(5, 'Pesca', 'Equipamentos, molinetes, varas, iscas e artigos para pesca esportiva e lazer.', '/img/molinete-pesca.png', true),
-(6, 'Agropecuária', 'Soluções completas para gestão agropecuária, cerca, manejo e instalações.', 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=600&q=80', true),
-(7, 'Plantação', 'Adubos, fertilizantes solúveis, substratos e defensivos para culturas.', 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=600&q=80', true),
-(8, 'Pintura', 'Tintas, pincéis, lixas, impermeabilizantes e acabamento para casa e fazenda.', '/img/tinta-lukscolor.png', true),
-(9, 'Jardim', 'Cuidado das plantas, fertilizantes, sementes, mangueiras e pulverizadores.', 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80', true),
-(10, 'Ferramentas', 'Ferramentas domésticas, agrícolas, EPIs e construções.', '/img/pa-construcao.png', true)
-ON CONFLICT (id_categoria) DO NOTHING;
+(1, 'Utensílios', 'Ferramentas manuais e utensílios práticos para trabalho no campo e manutenção geral.', 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=800&q=80', true),
+(2, 'Agricultura', 'Insumos, sementes, defensivos e soluções para plantio de alto rendimento.', 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=800&q=80', true),
+(3, 'Animais', 'Cuidados, alimentação e veterinária para grandes e pequenos animais.', 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=800&q=80', true),
+(4, 'Rações', 'Alimento balanceado para cães, gatos, cavalos, aves e peixes.', 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=800&q=80', true),
+(5, 'Pesca', 'Equipamentos, molinetes, varas, iscas e artigos para pesca esportiva e lazer.', 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80', true),
+(6, 'Agropecuária', 'Soluções completas para gestão agropecuária, cerca, manejo e instalações.', 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=800&q=80', true),
+(7, 'Plantação', 'Adubos, fertilizantes solúveis, substratos e defensivos para culturas.', 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=800&q=80', true),
+(8, 'Casa', 'Tintas, impermeabilizantes, acabamento e utilidades para o lar e fazenda.', 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=800&q=80', true),
+(9, 'Jardim', 'Cuidado das plantas, fertilizantes, sementes, mangueiras e pulverizadores.', 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80', true),
+(10, 'Acessórios', 'Botinas, luvas, EPIs, correias e peças de reposição rápida.', 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=800&q=80', true)
+ON CONFLICT (id_categoria) DO UPDATE SET
+    imagem_url = EXCLUDED.imagem_url;
 
 -- Usuários padrão (Admin e Cliente):
 INSERT INTO usuarios (id_usuario, nome, email, senha_hash, tipo, ativo) VALUES

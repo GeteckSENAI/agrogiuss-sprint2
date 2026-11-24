@@ -111,14 +111,13 @@
             <div class="adm-cards-grid" id="cardsGrid">
                 <% categorias.forEach(function(cat) { 
                     const dataStr = cat.data_cadastro ? new Date(cat.data_cadastro).toLocaleDateString('pt-BR') : '07/11/2024';
-                    const isLocalPng = cat.imagem_url && cat.imagem_url.startsWith('/img/');
                 %>
                     <article class="adm-catalog-card">
                         <a href="/admin/categorias/<%= cat.id_categoria %>" class="adm-card-img-wrap" title="Ver produtos da categoria <%= cat.nome %>">
                             <img 
-                                src="<%= cat.imagem_url || '/img/pa-construcao.png' %>" 
+                                src="<%= cat.imagem_url || 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=800&q=80' %>" 
                                 alt="<%= cat.nome %>" 
-                                class="adm-card-img <%= isLocalPng ? 'contain-img' : '' %>"
+                                class="adm-card-img"
                             >
                             <span class="adm-card-badge <%= cat.ativa ? '' : 'inativa' %>">
                                 <%= cat.ativa ? 'Ativa' : 'Inativa' %>

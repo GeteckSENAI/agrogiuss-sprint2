@@ -21,19 +21,19 @@ async function testConnection() {
         await BD.query("UPDATE produtos SET quantidade_estoque = 60 WHERE id_produto = 6");
 
         const catImages = [
-            [1, '/img/pa-construcao.png'],
-            [2, '/img/adubo-npk.png'],
-            [3, 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=600&q=80'],
-            [4, '/img/special-dog.png'],
-            [5, '/img/molinete-pesca.png'],
-            [6, 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=600&q=80'],
-            [7, 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=600&q=80'],
-            [8, '/img/tinta-lukscolor.png'],
-            [9, 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80'],
-            [10, '/img/pa-construcao.png']
+            [1, 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=800&q=80'],
+            [2, 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=800&q=80'],
+            [3, 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=800&q=80'],
+            [4, 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?auto=format&fit=crop&w=800&q=80'],
+            [5, 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80'],
+            [6, 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?auto=format&fit=crop&w=800&q=80'],
+            [7, 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=800&q=80'],
+            [8, 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&w=800&q=80'],
+            [9, 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80'],
+            [10, 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=800&q=80']
         ];
         for (const [id, img] of catImages) {
-            await BD.query('UPDATE categorias SET imagem_url = COALESCE(imagem_url, $1) WHERE id_categoria = $2', [img, id]);
+            await BD.query('UPDATE categorias SET imagem_url = $1 WHERE id_categoria = $2', [img, id]);
         }
 
         // Sincroniza sequências
