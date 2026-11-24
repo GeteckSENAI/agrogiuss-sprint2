@@ -198,8 +198,73 @@
                 </div>
 
             </div>
+
+            <!-- Vitrine de Produtos Relacionados / Similares -->
+            <% if (typeof relacionados !== 'undefined' && relacionados.length > 0) { %>
+                <section style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #e5e7eb;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <div>
+                            <h2 style="font-size:22px; font-weight:700; color:#18181b;">Produtos que você também pode precisar</h2>
+                            <p style="font-size:13.5px; color:#71717a;">Confira outras opções disponíveis em nosso estoque para complementar seu pedido.</p>
+                        </div>
+                        <a href="/catalogo" class="btn-voltar-pill">Ver catálogo completo &rarr;</a>
+                    </div>
+
+                    <div class="products-grid">
+                        <% relacionados.forEach(function(rel) { %>
+                            <article class="product-card">
+                                <div class="product-img-box">
+                                    <a href="/produto/<%= rel.id_produto %>">
+                                        <img src="<%= rel.imagem_url || '/img/logo.png' %>" alt="<%= rel.nome %>" class="product-img">
+                                    </a>
+                                </div>
+                                <h3 class="product-name">
+                                    <a href="/produto/<%= rel.id_produto %>"><%= rel.nome %></a>
+                                </h3>
+                                <p class="product-desc"><%= rel.observacao %></p>
+                                <div class="product-footer">
+                                    <span class="product-price">R$<%= Number(rel.valor_custo).toFixed(2).replace('.', ',') %></span>
+                                    <div style="display:flex; gap:6px;">
+                                        <a href="/produto/<%= rel.id_produto %>" class="btn-adicionar" style="background:#f4f5f6; color:#18181b; border:1px solid #e5e7eb;">Ver</a>
+                                        <button 
+                                            type="button" 
+                                            class="btn-adicionar"
+                                            style="cursor:pointer;"
+                                            data-id="<%= rel.id_produto %>"
+                                            data-nome="<%= rel.nome %>"
+                                            data-preco="<%= Number(rel.valor_custo) %>"
+                                            data-imagem="<%= rel.imagem_url || '/img/logo.png' %>"
+                                            onclick="adicionarAoCarrinhoBtn(this)"
+                                        >
+                                            + Adicionar
+                                        </button>
+                                    </div>
+                                </div>
+                            </article>
+                        <% }); %>
+                    </div>
+                </section>
+            <% } %>
         </div>
     </main>
+
+    <!-- Rodapé Institucional -->
+    <footer style="background:#f4f6f4; border-top:1px solid #e2e8e3; padding:28px 0; margin-top:40px; font-size:13px; color:#52525b;">
+        <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <img src="/img/logo.png" alt="Agro Giuss" style="height:28px;">
+                <span>&copy; <%= new Date().getFullYear() %> Agro Giuss &bull; Mirandópolis - SP</span>
+            </div>
+            <div style="display:flex; gap:18px;">
+                <a href="/">Início</a>
+                <a href="/catalogo">Catálogo</a>
+                <a href="/pedidos">Meus Pedidos</a>
+                <a href="/admin" style="color:#15803d; font-weight:700;">Painel Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loja.js"></script>
 
     <!-- Script Simples para Galeria e Seletor Numérico -->
     <script>

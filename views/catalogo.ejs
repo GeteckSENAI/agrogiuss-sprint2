@@ -163,9 +163,23 @@
                                 <span class="product-price">
                                     R$<%= Number(produto.valor_custo).toFixed(2).replace('.', ',') %>
                                 </span>
-                                <a href="/produto/<%= produto.id_produto %>" class="btn-adicionar">
-                                    Adicionar
-                                </a>
+                                <div style="display:flex; gap:6px;">
+                                    <a href="/produto/<%= produto.id_produto %>" class="btn-adicionar" style="background:#f4f5f6; color:#18181b; border:1px solid #e5e7eb;">
+                                        Detalhes
+                                    </a>
+                                    <button 
+                                        type="button" 
+                                        class="btn-adicionar" 
+                                        style="cursor:pointer;"
+                                        data-id="<%= produto.id_produto %>"
+                                        data-nome="<%= produto.nome %>"
+                                        data-preco="<%= Number(produto.valor_custo) %>"
+                                        data-imagem="<%= produto.imagem_url || '/img/logo.png' %>"
+                                        onclick="adicionarAoCarrinhoBtn(this)"
+                                    >
+                                        + Adicionar
+                                    </button>
+                                </div>
                             </div>
                         </article>
                     <% }); %>
@@ -192,5 +206,22 @@
         </div>
     </main>
 
+    <!-- Rodapé Institucional -->
+    <footer style="background:#f4f6f4; border-top:1px solid #e2e8e3; padding:28px 0; margin-top:40px; font-size:13px; color:#52525b;">
+        <div class="container" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <img src="/img/logo.png" alt="Agro Giuss" style="height:28px;">
+                <span>&copy; <%= new Date().getFullYear() %> Agro Giuss &bull; Mirandópolis - SP</span>
+            </div>
+            <div style="display:flex; gap:18px;">
+                <a href="/">Início</a>
+                <a href="/catalogo">Catálogo</a>
+                <a href="/pedidos">Meus Pedidos</a>
+                <a href="/admin" style="color:#15803d; font-weight:700;">Painel Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loja.js"></script>
 </body>
 </html>

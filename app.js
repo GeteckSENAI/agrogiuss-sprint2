@@ -397,8 +397,19 @@ app.get('/produto/:id', async (req, res) => {
             });
         }
 
+        const prod = resultado.rows[0];
+        const relRes = await BD.query(`
+            SELECT p.*, c.nome AS categoria_nome
+            FROM produtos p
+            JOIN categorias c ON p.id_categoria = c.id_categoria
+            WHERE p.ativo = true AND p.id_produto != $1
+            ORDER BY (p.id_categoria = $2) DESC, p.id_produto ASC
+            LIMIT 3
+        `, [id, prod.id_categoria]);
+
         res.render('produto', {
-            produto: resultado.rows[0]
+            produto: prod,
+            relacionados: relRes.rows
         });
     } catch (erro) {
         console.error('Erro ao carregar detalhe do produto:', erro);
