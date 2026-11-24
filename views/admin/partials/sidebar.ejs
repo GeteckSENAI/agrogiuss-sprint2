@@ -1,0 +1,43 @@
+<aside class="adm-sidebar">
+    <h2 class="adm-sidebar-title">Navegação</h2>
+    <p class="adm-sidebar-sub">Acesso rápido às principais áreas do painel.</p>
+
+    <ul class="adm-nav-list">
+        <li>
+            <a href="/admin" class="adm-nav-link <%= (typeof menuAtivo !== 'undefined' && menuAtivo === 'visao-geral') ? 'active' : '' %>">
+                <span class="adm-nav-num">01</span>
+                <span>Visão geral</span>
+            </a>
+        </li>
+        <li>
+            <a href="/admin/estoque" class="adm-nav-link <%= (typeof menuAtivo !== 'undefined' && menuAtivo === 'estoque') ? 'active' : '' %>">
+                <span class="adm-nav-num">02</span>
+                <span>Gerenciar estoque</span>
+            </a>
+        </li>
+        <li>
+            <a href="/admin/usuarios" class="adm-nav-link <%= (typeof menuAtivo !== 'undefined' && menuAtivo === 'usuarios') ? 'active' : '' %>">
+                <span class="adm-nav-num">03</span>
+                <span>Gerenciar usuários</span>
+            </a>
+        </li>
+        <li>
+            <a href="/admin/categorias" class="adm-nav-link <%= (typeof menuAtivo !== 'undefined' && menuAtivo === 'categorias') ? 'active' : '' %>">
+                <span class="adm-nav-num">04</span>
+                <span><%= (typeof nav04Label !== 'undefined' && nav04Label) ? nav04Label : 'Gerenciar categorias' %></span>
+            </a>
+        </li>
+        <li>
+            <a href="<%= (typeof nav05Href !== 'undefined' && nav05Href) ? nav05Href : '/admin/produtos/novo' %>" class="adm-nav-link <%= (typeof menuAtivo !== 'undefined' && menuAtivo === 'cadastro') ? 'active' : '' %>">
+                <span class="adm-nav-num">05</span>
+                <span><%= (typeof nav05Label !== 'undefined' && nav05Label) ? nav05Label : 'Cadastrar produtos' %></span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="adm-next-box">
+        <strong>Próxima ação</strong>
+        <p><%= (typeof proximaAcao !== 'undefined' && proximaAcao) ? proximaAcao : 'Revisar estoque crítico e concluir cadastros pendentes.' %></p>
+    </div>
+</aside>
+

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-admin.css">
+</head>
+<body>
+
+    <%- include('partials/topbar', { searchAction: '/admin/estoque', searchPlaceholder: 'Pesquisar' }) %>
+
+    <div class="adm-layout">
+        <%- include('partials/sidebar', {
+            menuAtivo: 'visao-geral',
+            proximaAcao: 'Revisar estoque crítico e concluir cadastros pendentes.'
+        }) %>
+
+        <main>
+            <!-- Cabeçalho -->
+            <div class="adm-header-row">
+                <div>
+                    <h1 class="adm-page-title">Painel administrativo</h1>
+                    <p class="adm-page-sub">Visão centralizada das operações, estoque, usuários e cadastros.</p>
+                </div>
+                <div class="adm-header-actions">
+                    <a href="/admin/relatorio.csv" class="btn-adm-outline">Exportar relatório</a>
+                    <a href="/admin/produtos/novo" class="btn-adm-primary">Novo cadastro</a>
+                </div>
+            </div>
+
+            <!-- 4 KPI Cards -->
+            <div class="adm-kpi-grid">
+                <!-- Card 1: Produtos ativos -->
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Produtos ativos</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= stats.produtosAtivos %></div>
+                    <div class="adm-kpi-foot">+<%= stats.produtosAtivos %> produtos cadastrados no catálogo</div>
+                </div>
+
+                <!-- Card 2: Estoque crítico -->
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Estoque crítico</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= stats.estoqueCritico %></div>
+                    <div class="adm-kpi-foot">Itens precisam de reposição imediata</div>
+                </div>
+
+                <!-- Card 3: Usuários ativos -->
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Usuários ativos</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= stats.usuariosAtivos %></div>
+                    <div class="adm-kpi-foot">Equipe administrativa e clientes ativos</div>
+                </div>
+
+                <!-- Card 4: Categorias -->
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Categorias</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= stats.categoriasAtivas %></div>
+                    <div class="adm-kpi-foot">Estrutura de navegação atualizada</div>
+                </div>
+            </div>
+
+            <!-- 4 Cards de Ação -->
+            <div class="adm-action-grid">
+                <!-- Gerenciar estoque -->
+                <div class="adm-action-card">
+                    <div>
+                        <div class="adm-action-top">
+                            <h3 class="adm-action-title">Gerenciar estoque</h3>
+                            <span class="adm-icon-badge">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            </span>
+                        </div>
+                        <p class="adm-action-desc">Acompanhe níveis de estoque, reposições e itens em baixa.</p>
+                    </div>
+                    <div class="adm-action-footer">
+                        <span class="adm-action-meta"><%= stats.estoqueCritico %> itens críticos</span>
+                        <a href="/admin/estoque" class="btn-adm-mint">Abrir</a>
+                    </div>
+                </div>
+
+                <!-- Gerenciar usuários -->
+                <div class="adm-action-card">
+                    <div>
+                        <div class="adm-action-top">
+                            <h3 class="adm-action-title">Gerenciar usuários</h3>
+                            <span class="adm-icon-badge">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            </span>
+                        </div>
+                        <p class="adm-action-desc">Permissões, perfis e acesso da equipe administrativa e clientes.</p>
+                    </div>
+                    <div class="adm-action-footer">
+                        <span class="adm-action-meta"><%= stats.usuariosAtivos %> usuários ativos</span>
+                        <a href="/admin/usuarios" class="btn-adm-mint">Abrir</a>
+                    </div>
+                </div>
+
+                <!-- Gerenciar categorias -->
+                <div class="adm-action-card">
+                    <div>
+                        <div class="adm-action-top">
+                            <h3 class="adm-action-title">Gerenciar categorias</h3>
+                            <span class="adm-icon-badge">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                            </span>
+                        </div>
+                        <p class="adm-action-desc">Organize categorias, subcategorias e navegação do catálogo.</p>
+                    </div>
+                    <div class="adm-action-footer">
+                        <span class="adm-action-meta"><%= stats.categoriasAtivas %> categorias ativas</span>
+                        <a href="/admin/categorias" class="btn-adm-mint">Abrir</a>
+                    </div>
+                </div>
+
+                <!-- Cadastrar produtos -->
+                <div class="adm-action-card">
+                    <div>
+                        <div class="adm-action-top">
+                            <h3 class="adm-action-title">Cadastrar produtos</h3>
+                            <span class="adm-icon-badge">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            </span>
+                        </div>
+                        <p class="adm-action-desc">Adicione novos SKUs, imagens, descrições e variações.</p>
+                    </div>
+                    <div class="adm-action-footer">
+                        <span class="adm-action-meta"><%= stats.produtosAtivos %> produtos ativos</span>
+                        <a href="/admin/produtos/novo" class="btn-adm-mint">Abrir</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Linha Inferior: Atividades recentes + Acesso rápido -->
+            <div class="adm-bottom-grid">
+                <!-- Coluna Esquerda: Atividades recentes -->
+                <div class="adm-panel-card">
+                    <div class="adm-panel-head">
+                        <h2 class="adm-panel-title">Atividades recentes</h2>
+                        <span class="adm-panel-tag">Últimas 24h</span>
+                    </div>
+
+                    <div class="adm-activity-list">
+                        <% if (typeof atividades !== 'undefined' && atividades.length > 0) { %>
+                            <% atividades.forEach(function(at, idx) { %>
+                                <div class="adm-activity-item">
+                                    <span class="adm-icon-badge">
+                                        <% if (idx % 4 === 0) { %>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                                        <% } else if (idx % 4 === 1) { %>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                        <% } else if (idx % 4 === 2) { %>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                        <% } else { %>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                                        <% } %>
+                                    </span>
+                                    <div class="adm-activity-info">
+                                        <strong><%= at.titulo %></strong>
+                                        <span><%= at.horario %> &bull; <%= at.autor %></span>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Acesso rápido -->
+                <div class="adm-panel-card">
+                    <h2 class="adm-panel-title" style="margin-bottom:2px;">Acesso rápido</h2>
+                    <span class="adm-panel-tag">Funções administrativas principais.</span>
+
+                    <div class="adm-quick-list">
+                        <a href="/admin/estoque" class="adm-quick-btn primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                            Gerenciar estoque
+                        </a>
+                        <a href="/admin/usuarios" class="adm-quick-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            Gerenciar usuários
+                        </a>
+                        <a href="/admin/categorias" class="adm-quick-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                            Gerenciar categorias
+                        </a>
+                        <a href="/admin/produtos/novo" class="adm-quick-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            Cadastrar produtos
+                        </a>
+                    </div>
+
+                    <div class="adm-next-box">
+                        <strong>Dica rápida</strong>
+                        <p>Use a navegação lateral para alternar entre operações e manter a visão geral sempre visível.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>
+

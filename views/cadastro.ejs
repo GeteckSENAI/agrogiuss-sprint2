@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar conta - Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-sistema.css">
+</head>
+<body>
+
+    <!-- 1. BARRA SUPERIOR -->
+    <header class="top-header">
+        <div class="container top-header-inner">
+            <a href="/" class="logo-wrapper" title="Agro Giuss Início">
+                <img src="/img/logo.png" alt="Agro Giuss" class="logo">
+            </a>
+
+            <div class="top-actions">
+                <form class="top-search-form" action="/catalogo" method="GET">
+                    <input type="text" name="busca" class="top-search-input" placeholder="Pesquisar" aria-label="Pesquisar">
+                    <button type="submit" class="top-search-btn" aria-label="Buscar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </form>
+
+                <a href="/catalogo" class="menu-hamburger-btn" aria-label="Ir para o catálogo" title="Catálogo">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="thin-green-divider"></div>
+
+    <!-- 2. CONTEÚDO PRINCIPAL -->
+    <main class="login-page-main">
+        <div class="container">
+            <div class="login-grid">
+
+                <!-- Coluna Esquerda: Formulário de Cadastro -->
+                <div class="login-card">
+                    <h1 class="login-card-title">Crie sua conta</h1>
+                    <p class="login-card-subtitle">Cadastre-se gratuitamente para comprar e acompanhar seus pedidos na Agro Giuss.</p>
+
+                    <% if (typeof erro !== 'undefined' && erro) { %>
+                        <div class="login-error-box" role="alert">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <span><%= erro %></span>
+                        </div>
+                    <% } %>
+
+                    <form action="/cadastro" method="POST">
+                        <div class="login-form-group">
+                            <input 
+                                type="text" 
+                                name="nome" 
+                                class="login-input" 
+                                placeholder="Seu nome completo" 
+                                required 
+                                autofocus
+                                value="<%= typeof nome !== 'undefined' ? nome : '' %>"
+                            >
+                        </div>
+
+                        <div class="login-form-group">
+                            <input 
+                                type="email" 
+                                name="email" 
+                                class="login-input" 
+                                placeholder="Seu melhor e-mail" 
+                                required
+                                value="<%= typeof email !== 'undefined' ? email : '' %>"
+                            >
+                        </div>
+
+                        <div class="login-form-group">
+                            <input 
+                                type="password" 
+                                name="senha" 
+                                class="login-input password-input" 
+                                placeholder="Crie uma senha" 
+                                required
+                                minlength="4"
+                            >
+                        </div>
+
+                        <button type="submit" class="login-submit-btn">Criar minha conta</button>
+
+                        <p class="login-footer-text">
+                            Já possui uma conta? <a href="/login">Faça login aqui.</a>
+                        </p>
+                    </form>
+                </div>
+
+                <!-- Coluna Direita: Mascote -->
+                <div class="login-mascot-wrapper">
+                    <img src="/img/fazendeiro.png" alt="Fazendeiro Agro Giuss" class="login-mascot-img">
+                    <h2 class="login-mascot-title">Tudo para o campo, organizado para você.</h2>
+                    <p class="login-mascot-text">
+                        Consulte pedidos, acompanhe ofertas e encontre soluções práticas para sua rotina com uma experiência simples, clara e profissional.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
+

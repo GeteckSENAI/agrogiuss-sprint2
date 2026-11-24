@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= categoria ? 'Editar Categoria' : 'Cadastrar Categorias' %> - Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-admin.css">
+</head>
+<body>
+
+    <%- include('partials/topbar', { searchAction: '/admin/categorias', searchPlaceholder: 'Pesquisar categorias' }) %>
+
+    <div class="adm-layout">
+        <%- include('partials/sidebar', {
+            menuAtivo: 'cadastro',
+            nav05Label: 'Cadastrar categorias',
+            nav05Href: '/admin/categorias/nova',
+            proximaAcao: 'Revise os dados obrigatórios antes de concluir o cadastro da nova categoria.'
+        }) %>
+
+        <main>
+            <form action="<%= categoria ? ('/admin/categorias/' + categoria.id_categoria + '/salvar') : '/admin/categorias/salvar' %>" method="POST">
+                <!-- Cabeçalho -->
+                <div class="adm-header-row">
+                    <div>
+                        <h1 class="adm-page-title"><%= categoria ? 'Editar categoria' : 'Cadastrar categorias' %></h1>
+                        <p class="adm-page-sub">Cadastre novas categorias com nome, descrição e imagem, mantendo a navegação do catálogo organizada e escalável.</p>
+                    </div>
+                    <div class="adm-header-actions">
+                        <a href="/admin/categorias" class="btn-adm-outline">Cancelar</a>
+                        <button type="submit" class="btn-adm-primary"><%= categoria ? 'Salvar alterações' : 'Cadastrar categoria' %></button>
+                    </div>
+                </div>
+
+                <% if (typeof erro !== 'undefined' && erro) { %>
+                    <div class="adm-alert adm-alert-error"><%= erro %></div>
+                <% } %>
+
+                <!-- Card Principal do Formulário (Screenshot 7) -->
+                <div class="adm-form-card">
+                    <div class="adm-form-head">
+                        <div>
+                            <h2>Dados da categoria</h2>
+                            <p>Preencha os campos obrigatórios para <%= categoria ? 'atualizar a categoria' : 'criar uma nova categoria' %> no catálogo.</p>
+                        </div>
+                        <span class="adm-draft-pill"><%= categoria ? 'Edição' : 'Rascunho' %></span>
+                    </div>
+
+                    <!-- Nome da categoria -->
+                    <div class="adm-field-group">
+                        <label class="adm-field-label" for="nome">Nome da categoria</label>
+                        <input 
+                            type="text" 
+                            id="nome" 
+                            name="nome" 
+                            class="adm-field-input" 
+                            placeholder="Ex: Ferramentas e Construção" 
+                            required
+                            value="<%= categoria ? categoria.nome : '' %>"
+                            oninput="atualizarValidacoes()"
+                        >
+                        <span class="adm-field-hint">Campo obrigatório</span>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div class="adm-field-group">
+                        <label class="adm-field-label" for="descricao">Descrição</label>
+                        <textarea 
+                            id="descricao" 
+                            name="descricao" 
+                            class="adm-field-textarea" 
+                            placeholder="Descreva os tipos de produtos e soluções pertencentes a esta categoria."
+                            required
+                            oninput="atualizarValidacoes()"
+                        ><%= categoria ? (categoria.descricao || '') : '' %></textarea>
+                        <span class="adm-field-hint">Campo obrigatório</span>
+                    </div>
+
+                    <% if (categoria) { %>
+                        <div class="adm-field-group">
+                            <label class="adm-field-label" for="ativa">Status da categoria</label>
+                            <select id="ativa" name="ativa" class="adm-field-select">
+                                <option value="true" <%= categoria.ativa ? 'selected' : '' %>>Ativa (visível no catálogo)</option>
+                                <option value="false" <%= !categoria.ativa ? 'selected' : '' %>>Inativa (oculta no catálogo)</option>
+                            </select>
+                        </div>
+                    <% } %>
+
+                    <!-- Imagem da categoria -->
+                    <div class="adm-field-group">
+                        <label class="adm-field-label">Imagem da categoria</label>
+                        <input type="hidden" name="imagem_base64" id="imagem_base64">
+                        <input type="hidden" name="imagem_url_atual" id="imagem_url_atual" value="<%= categoria ? (categoria.imagem_url || '') : '' %>">
+                        <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="handleFileSelect(event)">
+
+                        <div class="adm-upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                            <div class="adm-upload-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                            </div>
+                            <div class="adm-upload-title" id="uploadTitle">Arraste uma imagem ou clique para enviar</div>
+                            <div class="adm-upload-sub">PNG ou JPG &bull; até 5 MB</div>
+                            <img 
+                                id="imgPreview" 
+                                class="adm-upload-preview" 
+                                src="<%= (categoria && categoria.imagem_url) ? categoria.imagem_url : '' %>"
+                                style="<%= (categoria && categoria.imagem_url) ? 'display:inline-block;' : 'display:none;' %>"
+                                alt="Pré-visualização"
+                            >
+                        </div>
+                        <span class="adm-field-hint">Campo obrigatório</span>
+                    </div>
+
+                    <!-- Caixa de Validações em Tempo Real (Screenshot 7) -->
+                    <div class="adm-validation-box">
+                        <h4>Validações</h4>
+                        <p>Todos os campos obrigatórios devem ser preenchidos antes do cadastro.</p>
+                        <ul class="adm-val-list">
+                            <li class="adm-val-item" id="valNome">
+                                <span class="adm-val-dot"></span>
+                                <span class="val-text">Nome da categoria: pendente</span>
+                            </li>
+                            <li class="adm-val-item" id="valDescricao">
+                                <span class="adm-val-dot"></span>
+                                <span class="val-text">Descrição: pendente</span>
+                            </li>
+                            <li class="adm-val-item" id="valImagem">
+                                <span class="adm-val-dot"></span>
+                                <span class="val-text">Imagem da categoria: pendente</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Rodapé do Card -->
+                    <div class="adm-form-footer">
+                        <span class="adm-form-footer-note">Ao confirmar, a categoria será criada e ficará disponível para revisão no catálogo.</span>
+                        <div class="adm-header-actions">
+                            <button type="button" class="btn-adm-outline" onclick="alert('Rascunho salvo localmente!')">Salvar rascunho</button>
+                            <button type="submit" class="btn-adm-primary"><%= categoria ? 'Salvar alterações' : 'Cadastrar categoria' %></button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        function atualizarValidacoes() {
+            const nome = document.getElementById('nome').value.trim();
+            const desc = document.getElementById('descricao').value.trim();
+            const imgB64 = document.getElementById('imagem_base64').value;
+            const imgAtual = document.getElementById('imagem_url_atual').value;
+
+            const elNome = document.getElementById('valNome');
+            if (nome.length > 0) {
+                elNome.classList.add('ok');
+                elNome.querySelector('.val-text').textContent = 'Nome da categoria: preenchido';
+            } else {
+                elNome.classList.remove('ok');
+                elNome.querySelector('.val-text').textContent = 'Nome da categoria: pendente';
+            }
+
+            const elDesc = document.getElementById('valDescricao');
+            if (desc.length > 0) {
+                elDesc.classList.add('ok');
+                elDesc.querySelector('.val-text').textContent = 'Descrição: preenchida';
+            } else {
+                elDesc.classList.remove('ok');
+                elDesc.querySelector('.val-text').textContent = 'Descrição: pendente';
+            }
+
+            const elImg = document.getElementById('valImagem');
+            if (imgB64.length > 0 || imgAtual.length > 0) {
+                elImg.classList.add('ok');
+                elImg.querySelector('.val-text').textContent = 'Imagem da categoria: preenchida';
+            } else {
+                elImg.classList.remove('ok');
+                elImg.querySelector('.val-text').textContent = 'Imagem da categoria: pendente';
+            }
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            processFile(file);
+        }
+
+        function processFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imagem_base64').value = e.target.result;
+                const preview = document.getElementById('imgPreview');
+                preview.src = e.target.result;
+                preview.style.display = 'inline-block';
+                document.getElementById('uploadTitle').textContent = 'Imagem selecionada: ' + file.name;
+                atualizarValidacoes();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', function() {
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                processFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        atualizarValidacoes();
+    </script>
+
+</body>
+</html>
+

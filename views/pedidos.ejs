@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Pedidos e Carrinho - Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-sistema.css">
+    <style>
+        .pedidos-grid {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 28px;
+            margin-top: 24px;
+        }
+        .pedidos-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+        }
+        .pedidos-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #18181b;
+            margin-bottom: 6px;
+        }
+        .pedidos-card-sub {
+            font-size: 13px;
+            color: #71717a;
+            margin-bottom: 20px;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid #f4f4f5;
+        }
+        .cart-item:last-child { border-bottom: none; }
+        .cart-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cart-item-img {
+            width: 52px;
+            height: 52px;
+            border-radius: 8px;
+            object-fit: contain;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            padding: 4px;
+        }
+        .cart-item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #18181b;
+        }
+        .cart-item-price {
+            font-size: 13px;
+            color: #15803d;
+            font-weight: 700;
+        }
+        .cart-qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cart-qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid #d4d4d8;
+            background: #fff;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .cart-total-box {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 2px solid #f4f4f5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .cart-total-val {
+            font-size: 22px;
+            font-weight: 800;
+            color: #15803d;
+        }
+        .btn-finalizar {
+            width: 100%;
+            margin-top: 16px;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: #38b049;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+        }
+        .btn-finalizar:hover { background: #2fa03f; }
+        .hist-item {
+            padding: 12px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .badge-ok {
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+        @media (max-width: 768px) {
+            .pedidos-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="container top-header-inner">
+            <a href="/" class="logo-wrapper" title="Agro Giuss Início">
+                <img src="/img/logo.png" alt="Agro Giuss" class="logo">
+            </a>
+            <div class="top-actions">
+                <form class="top-search-form" action="/catalogo" method="GET">
+                    <input type="text" name="busca" class="top-search-input" placeholder="Pesquisar">
+                    <button type="submit" class="top-search-btn" aria-label="Buscar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <nav class="green-navbar">
+        <div class="container green-navbar-inner">
+            <ul class="green-nav-links">
+                <li><a href="/">Início</a></li>
+                <li><a href="/catalogo">Catálogo</a></li>
+                <li><a href="/catalogo?ordem=menor-preco">Ofertas</a></li>
+                <li><a href="/pedidos" class="active">Meus pedidos</a></li>
+            </ul>
+            <div class="green-nav-user">
+                <% if (typeof usuarioNome !== 'undefined' && usuarioNome) { %>
+                    <span>Bem vindo, <%= usuarioNome %>.</span>
+                    <% if (typeof usuarioTipo !== 'undefined' && usuarioTipo === 'admin') { %>
+                        <a href="/admin" class="logout-link" style="font-weight:700; margin-left:6px;">[Painel Admin]</a>
+                    <% } %>
+                    <a href="/logout" class="logout-link">(sair)</a>
+                <% } else { %>
+                    <a href="/login">Entrar / Criar conta</a>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <main class="catalogo-section">
+        <div class="container">
+            <div class="catalogo-header">
+                <div class="catalogo-header-info">
+                    <h1 class="catalogo-title">Meus pedidos e carrinho</h1>
+                    <p class="catalogo-subtitle">Finalize os itens selecionados no catálogo e acompanhe suas compras registradas.</p>
+                </div>
+                <a href="/catalogo" class="btn-adicionar" style="padding: 10px 18px; font-size: 14px;">+ Continuar comprando</a>
+            </div>
+
+            <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+                <div style="background:#dcfce7; border:1px solid #86efac; color:#15803d; padding:14px 18px; border-radius:10px; margin-bottom:20px; font-weight:600;">
+                    <%= sucesso %>
+                </div>
+            <% } %>
+            <% if (typeof erro !== 'undefined' && erro) { %>
+                <div style="background:#fef2f2; border:1px solid #fecaca; color:#dc2626; padding:14px 18px; border-radius:10px; margin-bottom:20px; font-weight:600;">
+                    <%= erro %>
+                </div>
+            <% } %>
+
+            <div class="pedidos-grid">
+                <!-- Coluna 1: Carrinho Atual -->
+                <div class="pedidos-card">
+                    <h2 class="pedidos-card-title">Carrinho de compras</h2>
+                    <p class="pedidos-card-sub">Confira as quantidades antes de confirmar seu pedido.</p>
+
+                    <div id="cartItemsContainer"></div>
+
+                    <div id="cartSummary" style="display:none;">
+                        <div class="cart-total-box">
+                            <span style="font-weight:600; color:#3f3f46;">Total do pedido</span>
+                            <span class="cart-total-val" id="cartTotalValue">R$ 0,00</span>
+                        </div>
+                        <form action="/pedidos/finalizar" method="POST" id="checkoutForm">
+                            <input type="hidden" name="itens_json" id="itensJsonInput">
+                            <button type="submit" class="btn-finalizar">Confirmar pedido agora</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Histórico recente -->
+                <div class="pedidos-card">
+                    <h2 class="pedidos-card-title">Últimos pedidos registrados</h2>
+                    <p class="pedidos-card-sub">Movimentações de compra e retirada na Agro Giuss.</p>
+
+                    <% if (typeof historico !== 'undefined' && historico.length > 0) { %>
+                        <% historico.forEach(function(item) { %>
+                            <div class="hist-item">
+                                <div>
+                                    <div style="font-weight:700; font-size:14px; color:#18181b;"><%= item.nome_produto %></div>
+                                    <div style="font-size:12px; color:#71717a;">
+                                        Quantidade: <%= item.quantidade %> un. &bull; <%= new Date(item.data_movimentacao).toLocaleDateString('pt-BR') %>
+                                    </div>
+                                </div>
+                                <span class="badge-ok">Concluído</span>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p style="font-size:14px; color:#71717a;">Nenhum pedido anterior registrado.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function getCart() {
+            try { return JSON.parse(localStorage.getItem('agrogiuss_cart') || '[]'); }
+            catch (e) { return []; }
+        }
+        function saveCart(cart) {
+            localStorage.setItem('agrogiuss_cart', JSON.stringify(cart));
+            renderCart();
+        }
+        function updateQty(id, delta) {
+            let cart = getCart();
+            const idx = cart.findIndex(i => Number(i.id_produto) === Number(id));
+            if (idx > -1) {
+                cart[idx].quantidade += delta;
+                if (cart[idx].quantidade <= 0) cart.splice(idx, 1);
+                saveCart(cart);
+            }
+        }
+        function renderCart() {
+            const container = document.getElementById('cartItemsContainer');
+            const summary = document.getElementById('cartSummary');
+            const cart = getCart();
+            if (!cart.length) {
+                container.innerHTML = '<div style="text-align:center; padding:32px 12px; color:#71717a;"><p style="margin-bottom:12px;">Seu carrinho está vazio no momento.</p><a href="/catalogo" class="btn-adicionar" style="display:inline-block;">Explorar catálogo</a></div>';
+                summary.style.display = 'none';
+                return;
+            }
+            let total = 0;
+            container.innerHTML = cart.map(item => {
+                const sub = Number(item.preco) * Number(item.quantidade);
+                total += sub;
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-left">
+                            <img src="${item.imagem || '/img/logo.png'}" class="cart-item-img" alt="">
+                            <div>
+                                <div class="cart-item-name">${item.nome}</div>
+                                <div class="cart-item-price">R$ ${Number(item.preco).toFixed(2).replace('.', ',')} / un.</div>
+                            </div>
+                        </div>
+                        <div class="cart-qty-controls">
+                            <button type="button" class="cart-qty-btn" onclick="updateQty(${item.id_produto}, -1)">-</button>
+                            <span style="font-weight:700; min-width:22px; text-align:center;">${item.quantidade}</span>
+                            <button type="button" class="cart-qty-btn" onclick="updateQty(${item.id_produto}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('cartTotalValue').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+            document.getElementById('itensJsonInput').value = JSON.stringify(cart);
+            summary.style.display = 'block';
+        }
+        <% if (typeof limparCarrinho !== 'undefined' && limparCarrinho) { %>
+            localStorage.removeItem('agrogiuss_cart');
+        <% } %>
+        renderCart();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,41 @@
+<header class="adm-topbar">
+    <div class="adm-topbar-inner">
+        <a href="/admin" class="adm-brand" title="Painel Administrativo Agro Giuss">
+            <img src="/img/logo.png" alt="Agro Giuss" class="adm-brand-logo">
+            <div class="adm-brand-text">
+                <h1>Painel administrativo</h1>
+                <span>Agro Giuss</span>
+            </div>
+        </a>
+
+        <div class="adm-topbar-right">
+            <form class="adm-top-search" action="<%= typeof searchAction !== 'undefined' ? searchAction : '/admin/estoque' %>" method="GET">
+                <input 
+                    type="text" 
+                    name="busca" 
+                    placeholder="<%= typeof searchPlaceholder !== 'undefined' ? searchPlaceholder : 'Pesquisar' %>"
+                    value="<%= typeof busca !== 'undefined' ? busca : '' %>"
+                >
+                <button type="submit" aria-label="Pesquisar">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="adm-user-pill">
+                <div class="adm-avatar">AG</div>
+                <div class="adm-user-info">
+                    <strong><%= (typeof usuarioNome !== 'undefined' && usuarioNome) ? usuarioNome : 'Administrador' %></strong>
+                    <span>Mirandópolis</span>
+                </div>
+                <div class="adm-user-links">
+                    <a href="/" title="Ir para a loja pública">Ver site</a>
+                    <a href="/logout" title="Encerrar sessão">Sair</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+

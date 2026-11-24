@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Usuários - Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-admin.css">
+</head>
+<body>
+
+    <%- include('partials/topbar', { searchAction: '/admin/usuarios', searchPlaceholder: 'Pesquisar usuários', busca: typeof busca !== 'undefined' ? busca : '' }) %>
+
+    <div class="adm-layout">
+        <%- include('partials/sidebar', {
+            menuAtivo: 'usuarios',
+            proximaAcao: 'Revisar permissões de administradores e validar contas ativas.'
+        }) %>
+
+        <main>
+            <div class="adm-header-row">
+                <div>
+                    <h1 class="adm-page-title">Gerenciar usuários</h1>
+                    <p class="adm-page-sub">Cadastre administradores e clientes, controle permissões e gerencie o status de acesso.</p>
+                </div>
+                <div class="adm-header-actions">
+                    <a href="/admin/relatorio.csv" class="btn-adm-outline">Exportar relatório</a>
+                    <button type="button" class="btn-adm-primary" onclick="abrirModalNovoUsuario()">Novo usuário</button>
+                </div>
+            </div>
+
+            <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+                <div class="adm-alert adm-alert-success"><%= sucesso %></div>
+            <% } %>
+            <% if (typeof erro !== 'undefined' && erro) { %>
+                <div class="adm-alert adm-alert-error"><%= erro %></div>
+            <% } %>
+
+            <!-- 4 KPI Cards -->
+            <div class="adm-kpi-grid">
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Usuários ativos</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= usuarios.filter(u => u.ativo).length %></div>
+                    <div class="adm-kpi-foot">Contas habilitadas no sistema</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Administradores</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= usuarios.filter(u => u.tipo === 'admin').length %></div>
+                    <div class="adm-kpi-foot">Acesso total ao painel</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Clientes</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= usuarios.filter(u => u.tipo !== 'admin').length %></div>
+                    <div class="adm-kpi-foot">Compradores do catálogo</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Total cadastrado</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= usuarios.length %></div>
+                    <div class="adm-kpi-foot">Base completa da Agro Giuss</div>
+                </div>
+            </div>
+
+            <!-- Barra de filtros -->
+            <form class="adm-filter-bar" action="/admin/usuarios" method="GET">
+                <div class="adm-filter-left">
+                    <div class="adm-search-pill">
+                        <input type="text" name="busca" placeholder="Pesquisar por nome ou e-mail" value="<%= typeof busca !== 'undefined' ? busca : '' %>">
+                        <button type="submit">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </button>
+                    </div>
+
+                    <select name="tipo" class="adm-select-pill" onchange="this.form.submit()">
+                        <option value="todos" <%= (!filtroTipo || filtroTipo === 'todos') ? 'selected' : '' %>>Perfil: Todos</option>
+                        <option value="admin" <%= (filtroTipo === 'admin') ? 'selected' : '' %>>Perfil: Administradores</option>
+                        <option value="cliente" <%= (filtroTipo === 'cliente') ? 'selected' : '' %>>Perfil: Clientes</option>
+                    </select>
+                </div>
+            </form>
+
+            <!-- Tabela de Usuários -->
+            <div class="adm-stock-table-card">
+                <table class="adm-stock-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Perfil</th>
+                            <th>Status</th>
+                            <th style="text-align:right;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% usuarios.forEach(function(u) { %>
+                            <tr>
+                                <td class="adm-stock-id"><%= String(u.id_usuario).padStart(2, '0') %></td>
+                                <td style="font-size:15px; font-weight:700;"><%= u.nome %></td>
+                                <td style="font-size:14px; color:#52525b;"><%= u.email || '—' %></td>
+                                <td>
+                                    <% if (u.tipo === 'admin') { %>
+                                        <span class="adm-draft-pill">Administrador</span>
+                                    <% } else { %>
+                                        <span style="font-size:12px; font-weight:600; background:#f4f4f5; color:#3f3f46; padding:5px 12px; border-radius:999px;">Cliente</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <span class="status-pill <%= u.ativo ? 'status-ok' : 'status-critico' %>">
+                                        <%= u.ativo ? 'ATIVO' : 'INATIVO' %>
+                                    </span>
+                                </td>
+                                <td style="text-align:right;">
+                                    <button 
+                                        type="button" 
+                                        class="btn-adm-mint"
+                                        onclick='abrirModalEditarUsuario(<%- JSON.stringify(u) %>)'
+                                    >
+                                        Editar
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Banner inferior -->
+            <div class="adm-cta-bar">
+                <div>
+                    <h3>Cadastrar novo administrador ou cliente</h3>
+                    <p>Adicione membros da equipe administrativa ou contas de clientes com acesso imediato.</p>
+                </div>
+                <button type="button" class="btn-adm-primary" onclick="abrirModalNovoUsuario()">Novo usuário</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Cadastro / Edição de Usuário -->
+    <div class="adm-modal-backdrop" id="modalUsuario">
+        <div class="adm-modal">
+            <div class="adm-modal-header">
+                <h3 id="modalUsuarioTitulo">Cadastrar usuário</h3>
+                <button type="button" class="adm-modal-close" onclick="fecharModalUsuario()">&times;</button>
+            </div>
+            <form action="/admin/usuarios/salvar" method="POST">
+                <input type="hidden" name="id_usuario" id="usrId">
+
+                <div class="adm-field-group">
+                    <label class="adm-field-label" for="usrNome">Nome completo</label>
+                    <input type="text" name="nome" id="usrNome" class="adm-field-input" placeholder="Ex: João Silva" required>
+                </div>
+
+                <div class="adm-field-group">
+                    <label class="adm-field-label" for="usrEmail">E-mail de acesso</label>
+                    <input type="email" name="email" id="usrEmail" class="adm-field-input" placeholder="usuario@agrogiuss.com" required>
+                </div>
+
+                <div class="adm-form-row-2">
+                    <div class="adm-field-group">
+                        <label class="adm-field-label" for="usrTipo">Perfil de permissão</label>
+                        <select name="tipo" id="usrTipo" class="adm-field-select">
+                            <option value="admin">Administrador (Painel)</option>
+                            <option value="cliente">Cliente (Catálogo)</option>
+                        </select>
+                    </div>
+
+                    <div class="adm-field-group">
+                        <label class="adm-field-label" for="usrAtivo">Status da conta</label>
+                        <select name="ativo" id="usrAtivo" class="adm-field-select">
+                            <option value="true">Ativo</option>
+                            <option value="false">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="adm-field-group">
+                    <label class="adm-field-label" for="usrSenha">Senha <span id="usrSenhaHint" style="font-weight:400; color:#71717a;">(obrigatória para novo cadastro)</span></label>
+                    <input type="password" name="senha" id="usrSenha" class="adm-field-input" placeholder="Digite a senha de acesso">
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+                    <button type="button" class="btn-adm-outline" onclick="fecharModalUsuario()">Cancelar</button>
+                    <button type="submit" class="btn-adm-primary">Salvar usuário</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalNovoUsuario() {
+            document.getElementById('modalUsuarioTitulo').textContent = 'Cadastrar novo usuário';
+            document.getElementById('usrId').value = '';
+            document.getElementById('usrNome').value = '';
+            document.getElementById('usrEmail').value = '';
+            document.getElementById('usrTipo').value = 'admin';
+            document.getElementById('usrAtivo').value = 'true';
+            document.getElementById('usrSenha').value = '';
+            document.getElementById('usrSenha').required = true;
+            document.getElementById('usrSenhaHint').textContent = '(obrigatória)';
+            document.getElementById('modalUsuario').classList.add('open');
+        }
+        function abrirModalEditarUsuario(u) {
+            document.getElementById('modalUsuarioTitulo').textContent = 'Editar usuário #' + u.id_usuario;
+            document.getElementById('usrId').value = u.id_usuario;
+            document.getElementById('usrNome').value = u.nome || '';
+            document.getElementById('usrEmail').value = u.email || '';
+            document.getElementById('usrTipo').value = u.tipo || 'cliente';
+            document.getElementById('usrAtivo').value = u.ativo ? 'true' : 'false';
+            document.getElementById('usrSenha').value = '';
+            document.getElementById('usrSenha').required = false;
+            document.getElementById('usrSenhaHint').textContent = '(deixe em branco para manter a atual)';
+            document.getElementById('modalUsuario').classList.add('open');
+        }
+        function fecharModalUsuario() {
+            document.getElementById('modalUsuario').classList.remove('open');
+        }
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-sistema.css">
+    <style>
+        /* ── Layout geral do painel admin ── */
+        body { background: #f0fdf4; }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 32px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .admin-header-logo {
+            height: 36px;
+        }
+        .admin-header-info h2 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #18181b;
+            line-height: 1.2;
+        }
+        .admin-header-info span {
+            font-size: 12px;
+            color: #71717a;
+        }
+        .admin-btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #3f3f46;
+            background: #fff;
+            text-decoration: none;
+            transition: border-color .2s, color .2s;
+        }
+        .admin-btn-voltar:hover { border-color: #38b049; color: #38b049; }
+
+        /* ── Área central ── */
+        .admin-main {
+            min-height: calc(100vh - 65px - 48px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 20px;
+        }
+        .admin-login-grid {
+            display: grid;
+            grid-template-columns: 440px 1fr;
+            gap: 40px;
+            width: 100%;
+            max-width: 880px;
+            align-items: center;
+        }
+
+        /* ── Card do formulário ── */
+        .admin-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 36px 32px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        }
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 12px;
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .admin-card-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #18181b;
+            margin-bottom: 6px;
+        }
+        .admin-card-sub {
+            font-size: 14px;
+            color: #71717a;
+            margin-bottom: 28px;
+        }
+
+        /* Erro */
+        .admin-erro {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        /* Campos */
+        .admin-field {
+            margin-bottom: 18px;
+        }
+        .admin-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #18181b;
+            margin-bottom: 7px;
+        }
+        .admin-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .admin-input-wrap svg.field-icon {
+            position: absolute;
+            left: 12px;
+            color: #a1a1aa;
+            pointer-events: none;
+        }
+        .admin-input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #18181b;
+            background: #fff;
+            transition: border-color .2s;
+            font-family: inherit;
+        }
+        .admin-input:focus {
+            outline: none;
+            border-color: #38b049;
+        }
+        .admin-input::placeholder { color: #a1a1aa; }
+
+        /* Botão mostrar senha */
+        .btn-toggle-senha {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #38b049;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 0;
+            font-family: inherit;
+        }
+        .btn-toggle-senha:hover { color: #2fa03f; }
+
+        /* Checkbox manter conectado */
+        .admin-check-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .admin-check-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #38b049;
+            cursor: pointer;
+        }
+        .admin-check-row label {
+            font-size: 13px;
+            color: #3f3f46;
+            cursor: pointer;
+        }
+
+        /* Botão entrar */
+        .admin-btn-entrar {
+            width: 100%;
+            padding: 13px;
+            background: #38b049;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background .2s;
+            font-family: inherit;
+            margin-bottom: 20px;
+        }
+        .admin-btn-entrar:hover { background: #2fa03f; }
+
+        /* Recuperar acesso */
+        .admin-recover {
+            border-top: 1px solid #f3f4f6;
+            padding-top: 18px;
+        }
+        .admin-recover a {
+            font-size: 13px;
+            font-weight: 600;
+            color: #38b049;
+            text-decoration: none;
+        }
+        .admin-recover a:hover { text-decoration: underline; }
+        .admin-recover p {
+            font-size: 12px;
+            color: #71717a;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        /* ── Lado direito: mascote ── */
+        .admin-mascot-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 0 8px;
+        }
+        .admin-mascot-img {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            background: #fff;
+            object-fit: cover;
+        }
+        .admin-mascot-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #18181b;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+        .admin-mascot-text {
+            font-size: 14px;
+            color: #52525b;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .admin-mascot-alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 14px 16px;
+        }
+        .admin-mascot-alert svg { flex-shrink: 0; color: #38b049; margin-top: 2px; }
+        .admin-mascot-alert strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #15803d;
+            margin-bottom: 3px;
+        }
+        .admin-mascot-alert p {
+            font-size: 12px;
+            color: #3f3f46;
+            line-height: 1.5;
+        }
+
+        /* ── Footer ── */
+        .admin-footer {
+            padding: 14px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e5e7eb;
+            background: #fff;
+        }
+        .admin-footer span {
+            font-size: 12px;
+            color: #a1a1aa;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .admin-login-grid { grid-template-columns: 1fr; }
+            .admin-mascot-col { display: none; }
+            .admin-header { padding: 12px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="admin-header">
+        <div class="admin-header-left">
+            <img src="/img/logo.png" alt="Agro Giuss" class="admin-header-logo">
+            <div class="admin-header-info">
+                <h2>Painel administrativo</h2>
+                <span>Agro Giuss</span>
+            </div>
+        </div>
+        <a href="/" class="admin-btn-voltar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Voltar ao site
+        </a>
+    </header>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+        <div class="admin-login-grid">
+
+            <!-- CARD FORMULÁRIO -->
+            <div class="admin-card">
+                <div class="admin-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Área restrita
+                </div>
+                <h1 class="admin-card-title">Acesso administrativo</h1>
+                <p class="admin-card-sub">Use suas credenciais de administrador para entrar no painel da Agro Giuss.</p>
+
+                <% if (typeof erro !== 'undefined' && erro) { %>
+                <div class="admin-erro">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <%= erro %>
+                </div>
+                <% } %>
+
+                <form action="/admin/login" method="POST">
+                    <!-- Campo: email ou usuário -->
+                    <div class="admin-field">
+                        <label for="identificador">E-mail ou usuário</label>
+                        <div class="admin-input-wrap">
+                            <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <input
+                                type="text"
+                                id="identificador"
+                                name="identificador"
+                                class="admin-input"
+                                placeholder="Digite seu e-mail ou usuário"
+                                required
+                                autofocus
+                                value="<%= typeof identificador !== 'undefined' ? identificador : '' %>"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Campo: senha -->
+                    <div class="admin-field">
+                        <label for="senha">Senha</label>
+                        <div class="admin-input-wrap">
+                            <svg class="field-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <input
+                                type="password"
+                                id="senha"
+                                name="senha"
+                                class="admin-input"
+                                placeholder="Digite sua senha"
+                                required
+                            >
+                            <button type="button" class="btn-toggle-senha" onclick="toggleSenha()">Mostrar</button>
+                        </div>
+                    </div>
+
+                    <!-- Manter conectado -->
+                    <div class="admin-check-row">
+                        <input type="checkbox" id="manter" name="manter">
+                        <label for="manter">Manter conectado</label>
+                    </div>
+
+                    <button type="submit" class="admin-btn-entrar">
+                        Entrar no painel
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+
+                    <div class="admin-recover">
+                        <a href="#">Precisa recuperar seu acesso?</a>
+                        <p>Entre em contato com o responsável pelo painel para redefinir sua senha ou verificar sua permissão.</p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- MASCOTE / LADO DIREITO -->
+            <div class="admin-mascot-col">
+                <img src="/img/fazendeiro-figma.png" alt="Fazendeiro Agro Giuss" class="admin-mascot-img"
+                     onerror="this.src='/img/fazendeiro.png'">
+                <h2 class="admin-mascot-title">Tudo para o campo.<br>Gestão em um só lugar.</h2>
+                <p class="admin-mascot-text">Acesse o painel para gerenciar estoque, usuários, categorias e produtos da Agro Giuss.</p>
+                <div class="admin-mascot-alert">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <div>
+                        <strong>Exclusivo para a equipe autorizada</strong>
+                        <p>Este acesso é diferente da conta de cliente. As permissões são concedidas pelo responsável pelo painel.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="admin-footer">
+        <span>Agro Giuss &bull; Painel administrativo</span>
+        <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Não compartilhe suas credenciais.
+        </span>
+    </footer>
+
+    <script>
+        function toggleSenha() {
+            const input = document.getElementById('senha');
+            const btn = document.querySelector('.btn-toggle-senha');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = 'Ocultar';
+            } else {
+                input.type = 'password';
+                btn.textContent = 'Mostrar';
+            }
+        }
+    </script>
+
+</body>
+</html>
+

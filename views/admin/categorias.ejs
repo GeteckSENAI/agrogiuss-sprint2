@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorias - Painel Administrativo | Agro Giuss</title>
+    <link rel="stylesheet" href="/css/estilos-admin.css">
+</head>
+<body>
+
+    <%- include('partials/topbar', { searchAction: '/admin/categorias', searchPlaceholder: 'Pesquisar categorias', busca: typeof busca !== 'undefined' ? busca : '' }) %>
+
+    <div class="adm-layout">
+        <%- include('partials/sidebar', {
+            menuAtivo: 'categorias',
+            proximaAcao: 'Revisar categorias com baixa cobertura de produtos e concluir cadastros pendentes.'
+        }) %>
+
+        <main>
+            <!-- Cabeçalho -->
+            <div class="adm-header-row">
+                <div>
+                    <h1 class="adm-page-title">Categorias</h1>
+                    <p class="adm-page-sub">Organize categorias, subcategorias e navegação do catálogo com status, ações rápidas e hierarquia clara.</p>
+                </div>
+                <div class="adm-header-actions">
+                    <a href="/admin/relatorio.csv" class="btn-adm-outline">Exportar relatório</a>
+                    <a href="/admin/categorias/nova" class="btn-adm-primary">Nova categoria</a>
+                </div>
+            </div>
+
+            <% if (typeof sucesso !== 'undefined' && sucesso) { %>
+                <div class="adm-alert adm-alert-success"><%= sucesso %></div>
+            <% } %>
+
+            <!-- 4 KPI Cards (Screenshot 4) -->
+            <div class="adm-kpi-grid">
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Categorias ativas</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= categorias.filter(c => c.ativa).length %></div>
+                    <div class="adm-kpi-foot">Estrutura de navegação atualizada</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Subcategorias</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value">12</div>
+                    <div class="adm-kpi-foot">4 categorias com subníveis ativos</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Produtos vinculados</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= totalProdutos %></div>
+                    <div class="adm-kpi-foot">Distribuídos por categorias e subcategorias</div>
+                </div>
+
+                <div class="adm-kpi-card">
+                    <div class="adm-kpi-top">
+                        <span class="adm-kpi-label">Cobertura</span>
+                        <span class="adm-icon-badge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="adm-kpi-value"><%= cobertura %>%</div>
+                    <div class="adm-kpi-foot">Categorias com produtos em estoque</div>
+                </div>
+            </div>
+
+            <!-- Barra de Filtros -->
+            <form class="adm-filter-bar" action="/admin/categorias" method="GET">
+                <div class="adm-filter-left">
+                    <div class="adm-search-pill">
+                        <input type="text" name="busca" placeholder="Pesquisar categorias" value="<%= typeof busca !== 'undefined' ? busca : '' %>">
+                        <button type="submit">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </button>
+                    </div>
+
+                    <select name="status" class="adm-select-pill" onchange="this.form.submit()">
+                        <option value="todos" <%= (!statusFiltro || statusFiltro === 'todos') ? 'selected' : '' %>>Status: Todos</option>
+                        <option value="ativas" <%= (statusFiltro === 'ativas') ? 'selected' : '' %>>Status: Ativas</option>
+                        <option value="inativas" <%= (statusFiltro === 'inativas') ? 'selected' : '' %>>Status: Inativas</option>
+                    </select>
+
+                    <select class="adm-select-pill">
+                        <option>Tipo: Categorias</option>
+                    </select>
+                </div>
+
+                <div class="adm-view-toggle">
+                    <button type="button" class="adm-view-btn active" id="btnGrade" onclick="setModo('grade')">Grade</button>
+                    <button type="button" class="adm-view-btn" id="btnLista" onclick="setModo('lista')">Lista</button>
+                </div>
+            </form>
+
+            <!-- Grid de Categorias (3 Colunas - Screenshot 4) -->
+            <div class="adm-cards-grid" id="cardsGrid">
+                <% categorias.forEach(function(cat) { 
+                    const dataStr = cat.data_cadastro ? new Date(cat.data_cadastro).toLocaleDateString('pt-BR') : '07/11/2024';
+                    const isLocalPng = cat.imagem_url && cat.imagem_url.startsWith('/img/');
+                %>
+                    <article class="adm-catalog-card">
+                        <a href="/admin/categorias/<%= cat.id_categoria %>" class="adm-card-img-wrap" title="Ver produtos da categoria <%= cat.nome %>">
+                            <img 
+                                src="<%= cat.imagem_url || '/img/pa-construcao.png' %>" 
+                                alt="<%= cat.nome %>" 
+                                class="adm-card-img <%= isLocalPng ? 'contain-img' : '' %>"
+                            >
+                            <span class="adm-card-badge <%= cat.ativa ? '' : 'inativa' %>">
+                                <%= cat.ativa ? 'Ativa' : 'Inativa' %>
+                            </span>
+                        </a>
+
+                        <a href="/admin/categorias/<%= cat.id_categoria %>" class="adm-card-body">
+                            <h3 class="adm-card-title"><%= cat.nome %></h3>
+                            <p class="adm-card-desc"><%= cat.descricao || 'Categoria oficial do catálogo Agro Giuss.' %></p>
+                            <span class="adm-card-date"><%= dataStr %></span>
+                        </a>
+
+                        <div class="adm-card-footer">
+                            <a href="/admin/categorias/<%= cat.id_categoria %>" class="adm-card-count">
+                                <%= cat.total_produtos || 0 %> <%= Number(cat.total_produtos) === 1 ? 'produto vinculado' : 'produtos vinculados' %>
+                            </a>
+                            <div style="display:flex; gap:6px;">
+                                <a href="/admin/categorias/<%= cat.id_categoria %>" class="btn-adm-mint" style="background:#eaf9ed;">Ver</a>
+                                <a href="/admin/categorias/<%= cat.id_categoria %>/editar" class="btn-adm-mint">Editar</a>
+                            </div>
+                        </div>
+                    </article>
+                <% }); %>
+            </div>
+
+            <!-- Banner Inferior: Adicionar categorias -->
+            <div class="adm-cta-bar">
+                <div>
+                    <h3>Adicionar categorias</h3>
+                    <p>Crie novas categorias e subcategorias para manter a navegação do catálogo organizada e escalável.</p>
+                </div>
+                <a href="/admin/categorias/nova" class="btn-adm-primary">Nova categoria</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function setModo(modo) {
+            const grid = document.getElementById('cardsGrid');
+            const btnGrade = document.getElementById('btnGrade');
+            const btnLista = document.getElementById('btnLista');
+            if (modo === 'lista') {
+                grid.classList.add('list-mode');
+                btnLista.classList.add('active');
+                btnGrade.classList.remove('active');
+            } else {
+                grid.classList.remove('list-mode');
+                btnGrade.classList.add('active');
+                btnLista.classList.remove('active');
+            }
+        }
+    </script>
+
+</body>
+</html>
+
