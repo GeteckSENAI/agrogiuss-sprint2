@@ -1,289 +1,344 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acompanhamento do Estoque - Agro Giuss</title>
     <link rel="stylesheet" href="/css/estilos-admin.css">
 </head>
+
 <body>
 
-    <%- include('partials/topbar', { searchAction: '/admin/estoque', searchPlaceholder: 'Pesquisar no estoque', busca: typeof busca !== 'undefined' ? busca : '' }) %>
+    <%- include('partials/topbar', { searchAction: '/admin/estoque' , searchPlaceholder: 'Pesquisar no estoque' , busca:
+        typeof busca !=='undefined' ? busca : '' }) %>
 
-    <div class="adm-layout" id="estoqueLayout">
-        <%- include('partials/sidebar', {
-            menuAtivo: 'estoque',
-            proximaAcao: 'Revisar estoque crítico e concluir cadastros pendentes.'
-        }) %>
+        <div class="adm-layout" id="estoqueLayout">
+            <%- include('partials/sidebar', { menuAtivo: 'estoque' ,
+                proximaAcao: 'Revisar estoque crítico e concluir cadastros pendentes.' }) %>
 
-        <main>
-            <!-- Cabeçalho -->
-            <div class="adm-header-row">
-                <div>
-                    <h1 class="adm-page-title">Acompanhamento do estoque</h1>
-                    <p class="adm-page-sub">Visão centralizada dos produtos, quantidades, níveis mínimos e gestão individual de cada SKU.</p>
-                </div>
-                <div class="adm-header-actions">
-                    <a href="/admin/relatorio.csv" class="btn-adm-outline">Exportar relatório</a>
-                    <a href="/admin/produtos/novo" class="btn-adm-primary">Novo cadastro</a>
-                </div>
-            </div>
-
-            <% if (typeof sucesso !== 'undefined' && sucesso) { %>
-                <div class="adm-alert adm-alert-success"><%= sucesso %></div>
-            <% } %>
-            <% if (typeof erro !== 'undefined' && erro) { %>
-                <div class="adm-alert adm-alert-error"><%= erro %></div>
-            <% } %>
-
-            <!-- 4 KPI Cards rápidos -->
-            <div class="adm-kpi-grid">
-                <div class="adm-kpi-card">
-                    <div class="adm-kpi-top">
-                        <span class="adm-kpi-label">Produtos monitorados</span>
-                        <span class="adm-icon-badge">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
-                        </span>
+                <main>
+                    <!-- Cabeçalho -->
+                    <div class="adm-header-row">
+                        <div>
+                            <h1 class="adm-page-title">Acompanhamento do estoque</h1>
+                            <p class="adm-page-sub">Visão centralizada dos produtos, quantidades, níveis mínimos e
+                                gestão individual de cada SKU.</p>
+                        </div>
+                        <div class="adm-header-actions">
+                            <a href="/admin/relatorio.csv" class="btn-adm-outline">Exportar relatório</a>
+                            <a href="/admin/produtos/novo" class="btn-adm-primary">Novo cadastro</a>
+                        </div>
                     </div>
-                    <div class="adm-kpi-value"><%= produtos.length %></div>
-                    <div class="adm-kpi-foot">Clique em um item para gerenciá-lo</div>
-                </div>
 
-                <div class="adm-kpi-card">
-                    <div class="adm-kpi-top">
-                        <span class="adm-kpi-label">Estoque crítico</span>
-                        <span class="adm-icon-badge">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                        </span>
-                    </div>
-                    <div class="adm-kpi-value"><%= produtos.filter(p => Number(p.quantidade_estoque) <= Number(p.estoque_minimo)).length %></div>
-                    <div class="adm-kpi-foot">Itens precisam de reposição imediata</div>
-                </div>
+                    <% if (typeof sucesso !=='undefined' && sucesso) { %>
+                        <div class="adm-alert adm-alert-success">
+                            <%= sucesso %>
+                        </div>
+                        <% } %>
+                            <% if (typeof erro !=='undefined' && erro) { %>
+                                <div class="adm-alert adm-alert-error">
+                                    <%= erro %>
+                                </div>
+                                <% } %>
 
-                <div class="adm-kpi-card">
-                    <div class="adm-kpi-top">
-                        <span class="adm-kpi-label">Total em unidades</span>
-                        <span class="adm-icon-badge">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                        </span>
-                    </div>
-                    <div class="adm-kpi-value"><%= produtos.reduce((acc, p) => acc + Number(p.quantidade_estoque || 0), 0) %></div>
-                    <div class="adm-kpi-foot">Soma física disponível no depósito</div>
-                </div>
-
-                <div class="adm-kpi-card">
-                    <div class="adm-kpi-top">
-                        <span class="adm-kpi-label">Movimentações</span>
-                        <span class="adm-icon-badge">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
-                        </span>
-                    </div>
-                    <div class="adm-kpi-value"><%= typeof totalMovs !== 'undefined' ? totalMovs : 0 %></div>
-                    <div class="adm-kpi-foot">Entradas e saídas registradas</div>
-                </div>
-            </div>
-
-            <!-- Tabela Modernizada de Acompanhamento do Estoque -->
-            <div class="adm-stock-table-card">
-                <table class="adm-stock-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Produto</th>
-                            <th>Quantidade</th>
-                            <th>Status do Estoque</th>
-                            <th style="text-align:right;">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (produtos && produtos.length > 0) { %>
-                            <% produtos.forEach(function(prod) { 
-                                const qtd = Number(prod.quantidade_estoque);
-                                const min = Number(prod.estoque_minimo || 5);
-                                let statusClass = 'status-ok';
-                                let fillClass = 'fill-ok';
-                                let statusLabel = 'Em dia (OK)';
-                                if (qtd < min) {
-                                    statusClass = 'status-critico';
-                                    fillClass = 'fill-critico';
-                                    statusLabel = 'Precisa reestoque';
-                                } else if (qtd === min || qtd <= Math.ceil(min * 1.15)) {
-                                    statusClass = 'status-atencao';
-                                    fillClass = 'fill-atencao';
-                                    statusLabel = 'Atenção';
-                                }
-                                const pctBar = Math.min(100, Math.max(12, Math.round((qtd / Math.max(min * 3, 30)) * 100)));
-                            %>
-                                <tr>
-                                    <td class="adm-stock-id">
-                                        <span class="adm-stock-id-badge"><%= String(prod.id_produto).padStart(2, '0') %></span>
-                                    </td>
-                                    <td>
-                                        <div class="adm-prod-cell">
-                                            <a href="/admin/produtos/<%= prod.id_produto %>">
-                                                <img src="<%= prod.imagem_url || '/img/logo.png' %>" alt="<%= prod.nome %>" class="adm-prod-thumb">
-                                            </a>
-                                            <div class="adm-prod-meta">
-                                                <a href="/admin/produtos/<%= prod.id_produto %>" title="Gerenciar este produto individualmente">
-                                                    <strong><%= prod.nome %></strong>
-                                                </a>
-                                                <span>
-                                                    <%= prod.nome_categoria || 'Geral' %> &bull;
-                                                    R$ <%= Number(prod.valor_custo).toFixed(2).replace('.', ',') %> &bull;
-                                                    Mín: <%= min %> un.
+                                    <!-- 4 KPI Cards rápidos -->
+                                    <div class="adm-kpi-grid">
+                                        <div class="adm-kpi-card">
+                                            <div class="adm-kpi-top">
+                                                <span class="adm-kpi-label">Produtos monitorados</span>
+                                                <span class="adm-icon-badge">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                                        <path
+                                                            d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+                                                        </path>
+                                                    </svg>
                                                 </span>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="adm-stock-qty">
-                                        <div class="adm-qty-wrap">
-                                            <span class="adm-qty-number"><%= qtd %> <small>UNIDADES</small></span>
-                                            <div class="adm-qty-bar">
-                                                <div class="adm-qty-bar-fill <%= fillClass %>" style="width: <%= pctBar %>%;"></div>
+                                            <div class="adm-kpi-value">
+                                                <%= produtos.length %>
                                             </div>
+                                            <div class="adm-kpi-foot">Clique em um item para gerenciá-lo</div>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <span class="status-pill <%= statusClass %>"><%= statusLabel %></span>
-                                    </td>
-                                    <td style="text-align:right;">
-                                        <div class="adm-row-actions">
-                                            <a href="/admin/produtos/<%= prod.id_produto %>" class="btn-adm-ghost" title="Abrir tela individual do produto">
-                                                Gerenciar
-                                            </a>
-                                            <button 
-                                                type="button" 
-                                                class="btn-adm-mint btn-ajustar-item"
-                                                data-id="<%= prod.id_produto %>"
-                                                data-nome="<%= prod.nome %>"
-                                                data-qtd="<%= qtd %>"
-                                                onclick="abrirModalPorBotao(this)"
-                                            >
-                                                Ajustar
-                                            </button>
+
+                                        <div class="adm-kpi-card">
+                                            <div class="adm-kpi-top">
+                                                <span class="adm-kpi-label">Estoque crítico</span>
+                                                <span class="adm-icon-badge">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="adm-kpi-value">
+                                                <%= produtos.filter(p=> Number(p.quantidade_estoque) <=
+                                                        Number(p.estoque_minimo)).length %>
+                                            </div>
+                                            <div class="adm-kpi-foot">Itens precisam de reposição imediata</div>
                                         </div>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="5" style="text-align:center; padding:36px; color:#71717a; font-size:14px;">
-                                    Nenhum produto encontrado.
-                                </td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
 
-            <!-- Barra Inferior: Voltar + ATUALIZAR ESTOQUE -->
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-                <a href="/admin" class="btn-adm-outline" style="border-radius:999px; padding:10px 24px;">&larr; Voltar</a>
-                <button type="button" class="btn-adm-primary" style="padding:12px 26px; letter-spacing:0.3px;" onclick="abrirModalEstoqueGeral()">
-                    ATUALIZAR ESTOQUE
-                </button>
-            </div>
-        </main>
-    </div>
+                                        <div class="adm-kpi-card">
+                                            <div class="adm-kpi-top">
+                                                <span class="adm-kpi-label">Total em unidades</span>
+                                                <span class="adm-icon-badge">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <polygon
+                                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                        </polygon>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="adm-kpi-value">
+                                                <%= produtos.reduce((acc, p)=> acc + Number(p.quantidade_estoque || 0),
+                                                    0) %>
+                                            </div>
+                                            <div class="adm-kpi-foot">Soma física disponível no depósito</div>
+                                        </div>
 
-    <!-- Modal de Ajuste / Atualização de Estoque -->
-    <div class="adm-modal-backdrop" id="modalEstoque">
-        <div class="adm-modal">
-            <div class="adm-modal-header">
-                <h3 id="modalEstoqueTitulo">Atualizar estoque</h3>
-                <button type="button" class="adm-modal-close" onclick="fecharModalEstoque()">&times;</button>
-            </div>
-            <form action="/admin/estoque/movimentar" method="POST">
-                <div class="adm-field-group">
-                    <label class="adm-field-label" for="selectProdutoEstoque">Produto selecionado</label>
-                    <select name="id_produto" id="selectProdutoEstoque" class="adm-field-select" required>
-                        <% produtos.forEach(function(p) { %>
-                            <option value="<%= p.id_produto %>">
-                                #<%= String(p.id_produto).padStart(2, '0') %> - <%= p.nome %> (Atual: <%= p.quantidade_estoque %> un.)
-                            </option>
-                        <% }); %>
-                    </select>
+                                        <div class="adm-kpi-card">
+                                            <div class="adm-kpi-top">
+                                                <span class="adm-kpi-label">Movimentações</span>
+                                                <span class="adm-icon-badge">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <path
+                                                            d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="adm-kpi-value">
+                                                <%= typeof totalMovs !=='undefined' ? totalMovs : 0 %>
+                                            </div>
+                                            <div class="adm-kpi-foot">Entradas e saídas registradas</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tabela Modernizada de Acompanhamento do Estoque -->
+                                    <div class="adm-stock-table-card">
+                                        <table class="adm-stock-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Produto</th>
+                                                    <th>Quantidade</th>
+                                                    <th>Status do Estoque</th>
+                                                    <th style="text-align:right;">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% if (produtos && produtos.length> 0) { %>
+                                                    <% produtos.forEach(function(prod) { const
+                                                        qtd=Number(prod.quantidade_estoque); const
+                                                        min=Number(prod.estoque_minimo || 5); let
+                                                        statusClass='status-ok' ; let fillClass='fill-ok' ; let
+                                                        statusLabel='Em dia (OK)' ; if (qtd < min) {
+                                                        statusClass='status-critico' ; fillClass='fill-critico' ;
+                                                        statusLabel='Precisa reestoque' ; } else if (qtd===min || qtd
+                                                        <=Math.ceil(min * 1.15)) { statusClass='status-atencao' ;
+                                                        fillClass='fill-atencao' ; statusLabel='Atenção' ; } const
+                                                        pctBar=Math.min(100, Math.max(12, Math.round((qtd / Math.max(min
+                                                        * 3, 30)) * 100))); %>
+                                                        <tr>
+                                                            <td class="adm-stock-id">
+                                                                <span class="adm-stock-id-badge">
+                                                                    <%= String(prod.id_produto).padStart(2, '0' ) %>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <div class="adm-prod-cell">
+                                                                    <a href="/admin/produtos/<%= prod.id_produto %>">
+                                                                        <img src="<%= prod.imagem_url || '/img/logo.png' %>"
+                                                                            alt="<%= prod.nome %>"
+                                                                            class="adm-prod-thumb">
+                                                                    </a>
+                                                                    <div class="adm-prod-meta">
+                                                                        <a href="/admin/produtos/<%= prod.id_produto %>"
+                                                                            title="Gerenciar este produto individualmente">
+                                                                            <strong>
+                                                                                <%= prod.nome %>
+                                                                            </strong>
+                                                                        </a>
+                                                                        <span>
+                                                                            <%= prod.nome_categoria || 'Geral' %> &bull;
+                                                                                R$ <%=
+                                                                                    Number(prod.valor_custo).toFixed(2).replace('.', ','
+                                                                                    ) %> &bull;
+                                                                                    Mín: <%= min %> un.
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td class="adm-stock-qty">
+                                                                <div class="adm-qty-wrap">
+                                                                    <span class="adm-qty-number">
+                                                                        <%= qtd %> <small>UNIDADES</small>
+                                                                    </span>
+                                                                    <div class="adm-qty-bar">
+                                                                        <div class="adm-qty-bar-fill <%= fillClass %>"
+                                                                            style="width: <%= pctBar %>%;"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <span class="status-pill <%= statusClass %>">
+                                                                    <%= statusLabel %>
+                                                                </span>
+                                                            </td>
+                                                            <td style="text-align:right;">
+                                                                <div class="adm-row-actions">
+                                                                    <a href="/admin/produtos/<%= prod.id_produto %>"
+                                                                        class="btn-adm-ghost"
+                                                                        title="Abrir tela individual do produto">
+                                                                        Gerenciar
+                                                                    </a>
+                                                                    <button type="button"
+                                                                        class="btn-adm-mint btn-ajustar-item"
+                                                                        data-id="<%= prod.id_produto %>"
+                                                                        data-nome="<%= prod.nome %>"
+                                                                        data-qtd="<%= qtd %>"
+                                                                        onclick="abrirModalPorBotao(this)">
+                                                                        Ajustar
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <% }); %>
+                                                            <% } else { %>
+                                                                <tr>
+                                                                    <td colspan="5"
+                                                                        style="text-align:center; padding:36px; color:#71717a; font-size:14px;">
+                                                                        Nenhum produto encontrado.
+                                                                    </td>
+                                                                </tr>
+                                                                <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Barra Inferior: Voltar + ATUALIZAR ESTOQUE -->
+                                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                                        <a href="/admin" class="btn-adm-outline"
+                                            style="border-radius:999px; padding:10px 24px;">&larr; Voltar</a>
+                                        <button type="button" class="btn-adm-primary"
+                                            style="padding:12px 26px; letter-spacing:0.3px;"
+                                            onclick="abrirModalEstoqueGeral()">
+                                            ATUALIZAR ESTOQUE
+                                        </button>
+                                    </div>
+                </main>
+        </div>
+
+        <!-- Modal de Ajuste / Atualização de Estoque -->
+        <div class="adm-modal-backdrop" id="modalEstoque">
+            <div class="adm-modal">
+                <div class="adm-modal-header">
+                    <h3 id="modalEstoqueTitulo">Atualizar estoque</h3>
+                    <button type="button" class="adm-modal-close" onclick="fecharModalEstoque()">&times;</button>
                 </div>
-
-                <div class="adm-form-row-2">
+                <form action="/admin/estoque/movimentar" method="POST">
                     <div class="adm-field-group">
-                        <label class="adm-field-label" for="tipoMov">Tipo de operação</label>
-                        <select name="tipo" id="tipoMov" class="adm-field-select" required onchange="atualizarLabelQuantidade()">
-                            <option value="entrada">Entrada (+ Reposição)</option>
-                            <option value="saida">Saída (- Baixa)</option>
-                            <option value="definir">Definir estoque exato</option>
+                        <label class="adm-field-label" for="selectProdutoEstoque">Produto selecionado</label>
+                        <select name="id_produto" id="selectProdutoEstoque" class="adm-field-select" required>
+                            <% produtos.forEach(function(p) { %>
+                                <option value="<%= p.id_produto %>">
+                                    #<%= String(p.id_produto).padStart(2, '0' ) %> - <%= p.nome %> (Atual: <%=
+                                                p.quantidade_estoque %> un.)
+                                </option>
+                                <% }); %>
                         </select>
                     </div>
 
+                    <div class="adm-form-row-2">
+                        <div class="adm-field-group">
+                            <label class="adm-field-label" for="tipoMov">Tipo de operação</label>
+                            <select name="tipo" id="tipoMov" class="adm-field-select" required
+                                onchange="atualizarLabelQuantidade()">
+                                <option value="entrada">Entrada (+ Reposição)</option>
+                                <option value="saida">Saída (- Baixa)</option>
+                                <option value="definir">Definir estoque exato</option>
+                            </select>
+                        </div>
+
+                        <div class="adm-field-group">
+                            <label class="adm-field-label" for="qtdMov" id="labelQtdMov">Quantidade a somar</label>
+                            <input type="number" name="quantidade" id="qtdMov" class="adm-field-input" min="0"
+                                value="10" required>
+                        </div>
+                    </div>
+
                     <div class="adm-field-group">
-                        <label class="adm-field-label" for="qtdMov" id="labelQtdMov">Quantidade a somar</label>
-                        <input type="number" name="quantidade" id="qtdMov" class="adm-field-input" min="0" value="10" required>
+                        <label class="adm-field-label" for="obsMov">Observação / Motivo</label>
+                        <input type="text" name="observacao" id="obsMov" class="adm-field-input"
+                            placeholder="Ex: Reposição de fornecedor / Ajuste de inventário">
                     </div>
-                </div>
 
-                <div class="adm-field-group">
-                    <label class="adm-field-label" for="obsMov">Observação / Motivo</label>
-                    <input type="text" name="observacao" id="obsMov" class="adm-field-input" placeholder="Ex: Reposição de fornecedor / Ajuste de inventário">
-                </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:22px;">
-                    <a href="#" id="linkGerenciarIndividual" class="btn-adm-ghost" style="font-size:12.5px;">Ver ficha completa do produto &rarr;</a>
-                    <div style="display:flex; gap:10px;">
-                        <button type="button" class="btn-adm-outline" onclick="fecharModalEstoque()">Cancelar</button>
-                        <button type="submit" class="btn-adm-primary">Confirmar ajuste</button>
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:22px;">
+                        <a href="#" id="linkGerenciarIndividual" class="btn-adm-ghost" style="font-size:12.5px;">Ver
+                            ficha completa do produto &rarr;</a>
+                        <div style="display:flex; gap:10px;">
+                            <button type="button" class="btn-adm-outline"
+                                onclick="fecharModalEstoque()">Cancelar</button>
+                            <button type="submit" class="btn-adm-primary">Confirmar ajuste</button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <script>
-        function abrirModalPorBotao(btn) {
-            const idProduto = btn.getAttribute('data-id');
-            const nome = btn.getAttribute('data-nome');
-            const qtdAtual = btn.getAttribute('data-qtd');
+        <script>
+            function abrirModalPorBotao(btn) {
+                const idProduto = btn.getAttribute('data-id');
+                const nome = btn.getAttribute('data-nome');
+                const qtdAtual = btn.getAttribute('data-qtd');
 
-            const modal = document.getElementById('modalEstoque');
-            const select = document.getElementById('selectProdutoEstoque');
-            select.value = String(idProduto);
+                const modal = document.getElementById('modalEstoque');
+                const select = document.getElementById('selectProdutoEstoque');
+                select.value = String(idProduto);
 
-            document.getElementById('modalEstoqueTitulo').textContent = 'Ajustar: ' + nome;
-            document.getElementById('tipoMov').value = 'entrada';
-            document.getElementById('qtdMov').value = 10;
-            document.getElementById('obsMov').value = 'Ajuste de estoque: ' + nome;
-            document.getElementById('linkGerenciarIndividual').href = '/admin/produtos/' + idProduto;
-            atualizarLabelQuantidade();
-            modal.classList.add('open');
-        }
-
-        function abrirModalEstoqueGeral() {
-            const select = document.getElementById('selectProdutoEstoque');
-            document.getElementById('modalEstoqueTitulo').textContent = 'Atualizar estoque';
-            document.getElementById('obsMov').value = '';
-            if (select.value) {
-                document.getElementById('linkGerenciarIndividual').href = '/admin/produtos/' + select.value;
+                document.getElementById('modalEstoqueTitulo').textContent = 'Ajustar: ' + nome;
+                document.getElementById('tipoMov').value = 'entrada';
+                document.getElementById('qtdMov').value = 10;
+                document.getElementById('obsMov').value = 'Ajuste de estoque: ' + nome;
+                document.getElementById('linkGerenciarIndividual').href = '/admin/produtos/' + idProduto;
+                atualizarLabelQuantidade();
+                modal.classList.add('open');
             }
-            atualizarLabelQuantidade();
-            document.getElementById('modalEstoque').classList.add('open');
-        }
 
-        function atualizarLabelQuantidade() {
-            const tipo = document.getElementById('tipoMov').value;
-            const lbl = document.getElementById('labelQtdMov');
-            if (tipo === 'entrada') lbl.textContent = 'Quantidade a adicionar (+)';
-            else if (tipo === 'saida') lbl.textContent = 'Quantidade a retirar (-)';
-            else lbl.textContent = 'Novo estoque total exato';
-        }
+            function abrirModalEstoqueGeral() {
+                const select = document.getElementById('selectProdutoEstoque');
+                document.getElementById('modalEstoqueTitulo').textContent = 'Atualizar estoque';
+                document.getElementById('obsMov').value = '';
+                if (select.value) {
+                    document.getElementById('linkGerenciarIndividual').href = '/admin/produtos/' + select.value;
+                }
+                atualizarLabelQuantidade();
+                document.getElementById('modalEstoque').classList.add('open');
+            }
 
-        function fecharModalEstoque() {
-            document.getElementById('modalEstoque').classList.remove('open');
-        }
+            function atualizarLabelQuantidade() {
+                const tipo = document.getElementById('tipoMov').value;
+                const lbl = document.getElementById('labelQtdMov');
+                if (tipo === 'entrada') lbl.textContent = 'Quantidade a adicionar (+)';
+                else if (tipo === 'saida') lbl.textContent = 'Quantidade a retirar (-)';
+                else lbl.textContent = 'Novo estoque total exato';
+            }
 
-        // Fecha ao clicar fora do modal
-        document.getElementById('modalEstoque').addEventListener('click', function(e) {
-            if (e.target === this) fecharModalEstoque();
-        });
-    </script>
+            function fecharModalEstoque() {
+                document.getElementById('modalEstoque').classList.remove('open');
+            }
+
+            // Fecha ao clicar fora do modal
+            document.getElementById('modalEstoque').addEventListener('click', function (e) {
+                if (e.target === this) fecharModalEstoque();
+            });
+        </script>
 
 </body>
+
 </html>

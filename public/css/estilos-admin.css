@@ -730,9 +730,17 @@ a {
     transition: width 0.25s ease;
 }
 
-.adm-qty-bar-fill.fill-ok { background: #22c55e; }
-.adm-qty-bar-fill.fill-atencao { background: #eab308; }
-.adm-qty-bar-fill.fill-critico { background: #ef4444; }
+.adm-qty-bar-fill.fill-ok {
+    background: #22c55e;
+}
+
+.adm-qty-bar-fill.fill-atencao {
+    background: #eab308;
+}
+
+.adm-qty-bar-fill.fill-critico {
+    background: #ef4444;
+}
 
 /* Status Badges Modernizados e Coesos com o Sistema */
 .status-pill {
@@ -761,6 +769,7 @@ a {
     color: #15803d;
     border-color: #bbf7d0;
 }
+
 .status-ok::before {
     background: #16a34a;
     box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.16);
@@ -771,6 +780,7 @@ a {
     color: #a16207;
     border-color: #fde047;
 }
+
 .status-atencao::before {
     background: #eab308;
     box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
@@ -781,6 +791,7 @@ a {
     color: #b91c1c;
     border-color: #fecaca;
 }
+
 .status-critico::before {
     background: #ef4444;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
@@ -968,7 +979,7 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .adm-card-badge::before {
@@ -982,6 +993,7 @@ a {
 .adm-card-badge.inativa {
     color: #dc2626;
 }
+
 .adm-card-badge.inativa::before {
     background: #dc2626;
 }
@@ -1326,13 +1338,16 @@ a {
 
 /* Responsividade */
 @media (max-width: 1100px) {
+
     .adm-kpi-grid,
     .adm-action-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .adm-cards-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+
     .adm-bottom-grid {
         grid-template-columns: 1fr;
     }
@@ -1343,19 +1358,22 @@ a {
         grid-template-columns: 1fr;
         padding: 16px;
     }
+
     .adm-sidebar {
         position: static;
     }
+
     .adm-topbar {
         padding: 12px 16px;
     }
+
     .adm-top-search {
         display: none;
     }
+
     .adm-form-row-2,
     .adm-form-row-3,
     .adm-cards-grid {
         grid-template-columns: 1fr;
     }
 }
-
