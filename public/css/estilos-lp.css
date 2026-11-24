@@ -414,10 +414,362 @@ a {
 }
 
 /* ==========================================================================
-   6. BANNER INFERIOR (CTA)
+   6. FAIXA DE NÚMEROS / INDICADORES DE CONFIANÇA
+   ========================================================================== */
+.stats-strip-section {
+    padding: 8px 0 36px 0;
+}
+
+.stats-strip-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    background: linear-gradient(135deg, #f2fbf4 0%, #e6f7ea 100%);
+    border: 1px solid #ccead2;
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+}
+
+.stat-strip-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.stat-strip-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    border: 1px solid #ccead2;
+    color: #15803d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(21, 128, 61, 0.08);
+}
+
+.stat-strip-text strong {
+    display: block;
+    font-size: 20px;
+    font-weight: 800;
+    color: #14532d;
+    line-height: 1.15;
+}
+
+.stat-strip-text span {
+    font-size: 12.5px;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   7. VITRINE DE PRODUTOS EM DESTAQUE NA LANDING PAGE
+   ========================================================================== */
+.featured-section {
+    padding: 24px 0 48px 0;
+}
+
+.section-header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.section-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background-color: #eaf8ed;
+    border: 1px solid #c6e9cd;
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.lp-products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.lp-product-card {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+}
+
+.lp-product-card:hover {
+    transform: translateY(-4px);
+    border-color: #b7e4c0;
+    box-shadow: 0 12px 26px rgba(20, 83, 45, 0.08);
+}
+
+.lp-product-cat-tag {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid #dcfce7;
+    color: #15803d;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    z-index: 2;
+}
+
+.lp-product-img-wrap {
+    height: 175px;
+    background: #f4f6f5;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+.lp-product-img-wrap img {
+    width: 100%;
+    height: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    transition: transform 0.25s ease;
+}
+
+.lp-product-card:hover .lp-product-img-wrap img {
+    transform: scale(1.05);
+}
+
+.lp-product-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text-title);
+    margin-bottom: 6px;
+    line-height: 1.35;
+    min-height: 40px;
+}
+
+.lp-product-desc {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    line-height: 1.45;
+    margin-bottom: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.lp-product-bottom {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.lp-product-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: #15803d;
+}
+
+.lp-product-price small {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+}
+
+.lp-btn-buy {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.lp-btn-buy:hover {
+    background-color: var(--color-primary-hover);
+}
+
+/* ==========================================================================
+   8. DEPARTAMENTOS EM DESTAQUE (CATEGORIAS VISUAIS)
+   ========================================================================== */
+.departments-section {
+    padding: 12px 0 48px 0;
+}
+
+.departments-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.dept-card {
+    position: relative;
+    height: 190px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    color: #ffffff;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.dept-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.dept-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.82) 100%);
+}
+
+.dept-card:hover img {
+    transform: scale(1.06);
+}
+
+.dept-card-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.dept-card-content h3 {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 3px;
+}
+
+.dept-card-content p {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.86);
+}
+
+.dept-card-arrow {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   9. DEPOIMENTOS / CONFIANÇA DO PRODUTOR
+   ========================================================================== */
+.testimonials-section {
+    padding: 12px 0 48px 0;
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.testimonial-card {
+    background: #ffffff;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.testimonial-stars {
+    color: #16a34a;
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.testimonial-quote {
+    font-size: 13.5px;
+    color: var(--color-text-body);
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #f3f4f6;
+    padding-top: 12px;
+}
+
+.testimonial-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #dcfce7;
+    color: #14532d;
+    font-size: 12.5px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.testimonial-author strong {
+    display: block;
+    font-size: 13px;
+    color: var(--color-text-title);
+}
+
+.testimonial-author span {
+    font-size: 11.5px;
+    color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   10. BANNER INFERIOR (CTA) E RODAPÉ INSTITUCIONAL
    ========================================================================== */
 .cta-section {
-    padding: 10px 0 60px 0;
+    padding: 10px 0 44px 0;
 }
 
 .cta-box {
@@ -454,6 +806,51 @@ a {
     flex-shrink: 0;
 }
 
+.site-footer {
+    background-color: #f4f6f4;
+    border-top: 1px solid #e2e8e3;
+    padding: 44px 0 24px 0;
+    font-size: 13.5px;
+    color: var(--color-text-body);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.1fr;
+    gap: 32px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #e2e8e3;
+}
+
+.footer-col h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-title);
+    margin-bottom: 12px;
+}
+
+.footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-links a:hover {
+    color: #15803d;
+}
+
+.footer-bottom {
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
 /* ==========================================================================
    RESPONSIVIDADE BÁSICA
    ========================================================================== */
@@ -462,7 +859,15 @@ a {
         grid-template-columns: 1fr;
     }
     
-    .services-grid {
+    .services-grid,
+    .stats-strip-grid,
+    .lp-products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .departments-grid,
+    .testimonials-grid,
+    .footer-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
@@ -485,7 +890,12 @@ a {
         font-size: 30px;
     }
 
-    .services-grid {
+    .services-grid,
+    .stats-strip-grid,
+    .lp-products-grid,
+    .departments-grid,
+    .testimonials-grid,
+    .footer-grid {
         grid-template-columns: 1fr;
     }
 

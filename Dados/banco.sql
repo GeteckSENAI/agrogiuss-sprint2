@@ -96,12 +96,22 @@ ON CONFLICT (email) DO UPDATE SET
     tipo = EXCLUDED.tipo,
     ativo = true;
 
--- 6 Produtos oficiais do Catálogo Figma:
+-- 12 Produtos oficiais do Catálogo Agro Giuss:
 INSERT INTO produtos (id_produto, id_categoria, nome, observacao, quantidade_estoque, estoque_minimo, valor_custo, imagem_url, ativo) VALUES
 (1, 1, 'Pá de construção', 'Utensílio robusto para construção, manutenção e uso diário no campo.', 25, 5, 55.00, '/img/pa-construcao.png', true),
 (2, 4, 'Ração para cachorro Special Dog 10kg', 'Opção equilibrada para cães, com fórmula completa e prática para o dia a dia.', 63, 10, 79.00, '/img/special-dog.png', true),
 (3, 3, 'Ração para cachorros, cães adultos quidog 15kg', 'Fórmula completa para cães adultos, com perfil nutricional equilibrado e prático.', 102, 8, 95.00, '/img/quidog.png', true),
 (4, 2, 'Adubo 5kg crescimento', 'Solução para nutrição e desenvolvimento de culturas, com embalagem prática para uso no campo.', 12, 12, 40.00, '/img/adubo-npk.png', true),
 (5, 5, 'Molinete de pesca', 'Equipamento para pesca e lazer, com acabamento resistente e fácil manuseio.', 5, 10, 159.90, '/img/molinete-pesca.png', true),
-(6, 8, 'Tinta lukscolor', 'Solução para acabamento e proteção de superfícies, com acabamento durável e fácil aplicação.', 60, 6, 179.90, '/img/tinta-lukscolor.png', true)
-ON CONFLICT (id_produto) DO NOTHING;
+(6, 8, 'Tinta lukscolor', 'Solução para acabamento e proteção de superfícies, com acabamento durável e fácil aplicação.', 60, 6, 179.90, '/img/tinta-lukscolor.png', true),
+(7, 10, 'Botina de Couro Agro EPI Bico PVC', 'Calçado de segurança em couro legítimo hidrofugado com solado antiderrapante para uso rural.', 35, 8, 119.90, '/img/botina-couro.png', true),
+(8, 7, 'Pulverizador Costal Manual 20L', 'Equipamento ergonômico de alta pressão para aplicação precisa de defensivos e fertilizantes foliares.', 18, 5, 189.00, '/img/pulverizador-costal.png', true),
+(9, 9, 'Mangueira Trançada Jardim 30m', 'Mangueira siliconada de tripla camada ultra resistente com esguicho regulável e engate rápido.', 28, 6, 84.90, '/img/mangueira-jardim.png', true),
+(10, 6, 'Sal Mineral Bovino Giuss 25kg', 'Suplemento mineral pronto para uso, formulado para ganho de peso e saúde do rebanho a pasto.', 45, 10, 112.00, '/img/sal-mineral-bovino.png', true),
+(11, 2, 'Sementes de Milho Híbrido Safra 20kg', 'Sementes selecionadas com alto potencial produtivo, excelente germinação e resistência no campo.', 22, 6, 245.00, '/img/sementes-milho.png', true),
+(12, 1, 'Kit Ferramentas e Chaves 12 Peças', 'Conjunto profissional em aço cromo-vanádio para manutenção de implementos, cercas e reparos.', 16, 5, 134.90, '/img/kit-ferramentas.png', true)
+ON CONFLICT (id_produto) DO UPDATE SET
+    nome = EXCLUDED.nome,
+    observacao = EXCLUDED.observacao,
+    valor_custo = EXCLUDED.valor_custo,
+    imagem_url = EXCLUDED.imagem_url;

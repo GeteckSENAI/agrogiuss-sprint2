@@ -90,6 +90,33 @@ async function garantirEstruturaBanco() {
                 [urlFoto, idCat]
             );
         }
+
+        // Remove eventual produto de teste "a" criado durante testes e garante os 12 produtos completos do catálogo
+        await BD.query(`DELETE FROM movimentacoes_estoque WHERE id_produto IN (SELECT id_produto FROM produtos WHERE LOWER(TRIM(nome)) = 'a')`);
+        await BD.query(`DELETE FROM produtos WHERE LOWER(TRIM(nome)) = 'a'`);
+
+        const novosProdutos = [
+            [7, 10, 'Botina de Couro Agro EPI Bico PVC', 'Calçado de segurança em couro legítimo hidrofugado com solado antiderrapante para uso rural.', 35, 8, 119.90, '/img/botina-couro.png'],
+            [8, 7, 'Pulverizador Costal Manual 20L', 'Equipamento ergonômico de alta pressão para aplicação precisa de defensivos e fertilizantes foliares.', 18, 5, 189.00, '/img/pulverizador-costal.png'],
+            [9, 9, 'Mangueira Trançada Jardim 30m', 'Mangueira siliconada de tripla camada ultra resistente com esguicho regulável e engate rápido.', 28, 6, 84.90, '/img/mangueira-jardim.png'],
+            [10, 6, 'Sal Mineral Bovino Giuss 25kg', 'Suplemento mineral pronto para uso, formulado para ganho de peso e saúde do rebanho a pasto.', 45, 10, 112.00, '/img/sal-mineral-bovino.png'],
+            [11, 2, 'Sementes de Milho Híbrido Safra 20kg', 'Sementes selecionadas com alto potencial produtivo, excelente germinação e resistência no campo.', 22, 6, 245.00, '/img/sementes-milho.png'],
+            [12, 1, 'Kit Ferramentas e Chaves 12 Peças', 'Conjunto profissional em aço cromo-vanádio para manutenção de implementos, cercas e reparos.', 16, 5, 134.90, '/img/kit-ferramentas.png']
+        ];
+        for (const [idP, idC, nome, obs, qtd, min, preco, img] of novosProdutos) {
+            await BD.query(
+                `INSERT INTO produtos (id_produto, id_categoria, nome, observacao, quantidade_estoque, estoque_minimo, valor_custo, imagem_url, ativo)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true)
+                 ON CONFLICT (id_produto) DO UPDATE SET
+                    id_categoria = EXCLUDED.id_categoria,
+                    nome = EXCLUDED.nome,
+                    observacao = EXCLUDED.observacao,
+                    valor_custo = EXCLUDED.valor_custo,
+                    imagem_url = EXCLUDED.imagem_url`,
+                [idP, idC, nome, obs, qtd, min, preco, img]
+            );
+        }
+        await BD.query("SELECT setval('produtos_id_produto_seq', COALESCE((SELECT MAX(id_produto) FROM produtos), 1))");
     } catch (e) {
         console.warn('Aviso ao verificar estrutura inicial do banco:', e.message);
     }
@@ -131,9 +158,28 @@ app.use((req, res, next) => {
 // ROTAS PÚBLICAS E DA LOJA (EJS + POSTGRESQL)
 // =============================================================================
 
-// 1. Landing Page Institucional
-app.get('/', (req, res) => {
-    res.render('landing/index');
+// 1. Landing Page Institucional (com produtos em destaque do banco)
+app.get('/', async (req, res) => {
+    try {
+        const [destaquesRes, totalRes] = await Promise.all([
+            BD.query(`
+                SELECT p.*, c.nome AS categoria_nome
+                FROM produtos p
+                LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
+                WHERE p.ativo = true
+                ORDER BY p.id_produto ASC
+                LIMIT 8
+            `),
+            BD.query('SELECT COUNT(*) FROM produtos WHERE ativo = true')
+        ]);
+        res.render('landing/index', {
+            destaques: destaquesRes.rows,
+            totalProdutos: parseInt(totalRes.rows[0].count, 10) || 12
+        });
+    } catch (erro) {
+        console.error('Erro ao carregar destaques da landing page:', erro);
+        res.render('landing/index', { destaques: [], totalProdutos: 12 });
+    }
 });
 
 // 2. Login de Cliente
